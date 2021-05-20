@@ -17,7 +17,7 @@ namespace TemplateLib.Objects
         private readonly Dictionary<string, string> _variableString = new Dictionary<string, string>();
         private readonly Dictionary<string, Template> _variableTemplates = new Dictionary<string, Template>();
 
-        private Func<string, string>? _editor;
+        public Func<string, string>? Editor { get; set; }
 
         public Template(string template, string regex, Func<string, string>? editor)
         {
