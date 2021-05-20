@@ -5,13 +5,11 @@ using System.Linq;
 
 namespace TemplateLib.Objects
 {
-    [AttributeUsage(AttributeTargets.All)]
     public class Template
     {
         private string _template;
         private readonly string _regex;
         private readonly Regex _selectorsPattern;
-
 
         private Dictionary<string, string> _selectors = new Dictionary<string, string>();
         private readonly Dictionary<string, string> _variableString = new Dictionary<string, string>();
