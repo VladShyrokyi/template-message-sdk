@@ -161,7 +161,7 @@ namespace TemplateLib.Objects
 
         public override string ToString()
         {
-            return Editor != null ? Editor(Write()) : Write(_variableString, "");
+            return Editor != null ? Editor(Write()) : Write();
         }
     }
 }
