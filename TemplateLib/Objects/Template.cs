@@ -23,7 +23,7 @@ namespace TemplateLib.Objects
         {
             _regex = regex;
             _selectorsPattern = new Regex(_regex);
-            _editor = editor;
+            Editor = editor;
 
             TemplateString = template;
         }
@@ -77,18 +77,22 @@ namespace TemplateLib.Objects
             return null;
         }
 
-        public Template Put(string variableName, string variableValue)
+        public Template PutVariable<T>(string variableName, T variableValue) where T : class
         {
-            _variableTemplates.Remove(variableName);
-            _variableString.Add(variableName, variableValue);
+            if (typeof(T) == typeof(string))
+            {
+                if (!(variableValue is string value)) return this;
 
-            return this;
-        }
+                _variableTemplates.Remove(variableName);
+                _variableString.Add(variableName, value);
+            }
+            else if (typeof(T) == typeof(Template))
+            {
+                if (!(variableValue is Template value)) return this;
 
-        public Template Put(string variableName, Template variableValue)
-        {
-            _variableString.Remove(variableName);
-            _variableTemplates.Add(variableName, variableValue);
+                _variableString.Remove(variableName);
+                _variableTemplates.Add(variableName, value);
+            }
 
             return this;
         }
@@ -157,7 +161,7 @@ namespace TemplateLib.Objects
 
         public override string ToString()
         {
-            return _editor != null ? _editor(Write()) : Write(_variableString, "");
+            return Editor != null ? Editor(Write()) : Write(_variableString, "");
         }
     }
 }
