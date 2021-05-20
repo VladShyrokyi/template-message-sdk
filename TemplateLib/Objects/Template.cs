@@ -189,5 +189,69 @@ namespace TemplateLib.Objects
         {
             return Editor != null ? Editor(Write()) : Write();
         }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Template template))
+            {
+                return false;
+            }
+
+            if (template._template != _template)
+            {
+                return false;
+            }
+
+            if (template.Editor != Editor)
+            {
+                return false;
+            }
+
+            if ((from selector in template.GetSelectors()
+                where !_selectors.ContainsKey(selector)
+                select selector).Count() != 0)
+            {
+                return false;
+            }
+
+            if ((from pair in _variableString
+                    let variableName = pair.Key
+                    let variableValue = pair.Value
+                    let variableString = template.GetVariable<string>(variableName)
+                    where variableString != variableValue
+                    select variableValue
+                ).Any())
+            {
+                return false;
+            }
+
+            if ((from pair in _variableTemplates
+                    let variableName = pair.Key
+                    let variableValue = pair.Value
+                    let variableTemplate = template.GetVariable<Template>(variableName)
+                    where variableTemplate != variableValue
+                    select variableValue
+                ).Any())
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = _template.GetHashCode();
+                hashCode = (hashCode * 397) ^ _regex.GetHashCode();
+                hashCode = (hashCode * 397) ^ _selectorsPattern.GetHashCode();
+                hashCode = (hashCode * 397) ^ _selectors.GetHashCode();
+                hashCode = (hashCode * 397) ^ _variableString.GetHashCode();
+                hashCode = (hashCode * 397) ^ _variableTemplates.GetHashCode();
+                hashCode = (hashCode * 397) ^ (Editor != null ? Editor.GetHashCode() : 0);
+                return hashCode;
+            }
+        }
     }
 }
