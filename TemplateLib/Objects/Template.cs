@@ -102,6 +102,21 @@ namespace TemplateLib.Objects
             return new List<string>(_selectors.Keys);
         }
 
+        public int GetCharCount()
+        {
+            return ToString().Length;
+        }
+
+        public int GetCharCountOnlyTemplate()
+        {
+            return Write(new Dictionary<string, string>(), "").Length;
+        }
+
+        public int GetCharCountWithoutEditor()
+        {
+            return Write(s => s).Length;
+        }
+
         public string Write()
         {
             var variables = _variableString
@@ -111,6 +126,17 @@ namespace TemplateLib.Objects
                 )
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
 
+            return Write(variables, "");
+        }
+
+        public string Write(Func<string, string> childTemplateEditor)
+        {
+            var variables = _variableString
+                .Concat(_variableTemplates.Select(
+                        pair => new KeyValuePair<string, string>(pair.Key, pair.Value.Write(childTemplateEditor))
+                    )
+                )
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
             return Write(variables, "");
         }
 
