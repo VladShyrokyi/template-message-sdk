@@ -7,7 +7,7 @@ namespace TemplateLib.Objects
 {
     public class Template
     {
-        private string _template;
+        private string _template = "";
         private readonly string _regex;
         private readonly Regex _selectorsPattern;
 
@@ -43,8 +43,14 @@ namespace TemplateLib.Objects
                 var match = _selectorsPattern.Match(value);
                 while (match.Success)
                 {
-                    _selectors.Add(match.Groups[0].Value, match.Value);
-                    match.NextMatch();
+                    var selectorName = match.Groups[1].Value;
+                    var selectorValue = match.Value;
+                    if (!_selectors.ContainsKey(selectorName))
+                    {
+                        _selectors.Add(selectorName, selectorValue);
+                    }
+
+                    match = match.NextMatch();
                 }
 
                 _template = value;
@@ -82,6 +88,10 @@ namespace TemplateLib.Objects
                 if (!(variableValue is string value)) return this;
 
                 _variableTemplates.Remove(variableName);
+                if (_variableString.ContainsKey(variableName) && !_variableString.Remove(variableName))
+                {
+                    return this;
+                }
                 _variableString.Add(variableName, value);
             }
             else if (typeof(T) == typeof(Template))
@@ -89,6 +99,10 @@ namespace TemplateLib.Objects
                 if (!(variableValue is Template value)) return this;
 
                 _variableString.Remove(variableName);
+                if (_variableTemplates.ContainsKey(variableName) && !_variableTemplates.Remove(variableName))
+                {
+                    return this;
+                }
                 _variableTemplates.Add(variableName, value);
             }
 
