@@ -6,14 +6,18 @@ namespace TemplateLib.Objects
 {
     public class TextBlock
     {
-        private List<string> _variablesName;
+        private List<string> _variablesName = new List<string>();
 
         public Template Template { get; }
+
+        public TextBlock()
+        {
+            Template = new Template("");
+        }
 
         public TextBlock(string template)
         {
             Template = new Template(template);
-            _variablesName = Template.GetSelectors();
         }
 
         public TextBlock(string template, Dictionary<string, string> variables) : this(template)
