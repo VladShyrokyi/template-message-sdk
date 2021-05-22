@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TemplateLib.Objects
 {
@@ -95,6 +96,26 @@ namespace TemplateLib.Objects
             }
 
             return this;
+        }
+
+        public T? GetVariable<T>(string variableName) where T : class
+        {
+            return Template.GetVariable<T>(variableName);
+        }
+
+        public Dictionary<string, T> GetVariables<T>() where T : class
+        {
+            return GetVariables<T>(_variablesName);
+        }
+
+        public Dictionary<string, T> GetVariables<T>(IEnumerable<string> variablesName) where T : class
+        {
+            return variablesName
+                .Where(variableName => Template.GetVariable<T>(variableName) != null)
+                .ToDictionary(
+                    variableName => variableName,
+                    variableName => Template.GetVariable<T>(variableName)!
+                );
         }
     }
 }
