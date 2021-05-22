@@ -40,7 +40,6 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Class1.cs" />
         <Compile Include="Objects\Template.cs" />
         <Compile Include="Objects\TextBlock.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
