@@ -8,7 +8,7 @@ namespace TemplateLib.Objects
     {
         private List<string> _variablesName = new List<string>();
 
-        public Template Template { get; }
+        private Template Template { get; }
 
         public TextBlock()
         {
@@ -134,6 +134,16 @@ namespace TemplateLib.Objects
         public string WriteWithoutEditor()
         {
             return Template.Write();
+        }
+
+        public int GetCharCountWithEditor()
+        {
+            return WriteWithEditor().Length;
+        }
+
+        public int GetCharCountWithoutEditor()
+        {
+            return WriteWithoutEditor().Length;
         }
 
         public override bool Equals(object obj)
