@@ -44,7 +44,7 @@ namespace TemplateConsoleApp
                 Console.WriteLine($"        Chat - {message.Chat.Username}({message.Chat.LastName} {message.Chat.FirstName})");
                 Console.WriteLine($"        Data - {message.Date}");
                 Console.WriteLine($"        Text - {message.Text}");
-                if (message.Text[0].Equals('/'))
+                if (message.Text[0].Equals('/') && message.Text.Length > 1)
                 {
                     var command = CommandHandler.Create(
                         message.Text.Substring(1),
