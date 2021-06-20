@@ -138,7 +138,7 @@ namespace TemplateLib.Objects
 
         public override bool Equals(object obj)
         {
-            if (obj is not TextBlock anotherBlock)
+            if (!(obj is TextBlock anotherBlock))
             {
                 return false;
             }

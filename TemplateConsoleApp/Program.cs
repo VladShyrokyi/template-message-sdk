@@ -64,7 +64,7 @@ namespace TemplateConsoleApp
 
             var headBlock = new TextBlock($"User: %[{user}]%%[{append}]%");
             headBlock.PutVariable(user, update.Message.Chat.Username);
-            headBlock.PutVariable(append, $"({update.Message.Chat.LastName} {update.Message.Chat.FirstName})");
+            headBlock.PutVariable(append, $" ({update.Message.Chat.LastName} {update.Message.Chat.FirstName})");
 
             var bodyBlock = new TextBlock($"Text: %[{text}]%%[{append}]%");
             bodyBlock.PutVariable(text, update.Message.Text);

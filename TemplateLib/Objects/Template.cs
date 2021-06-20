@@ -96,7 +96,7 @@ namespace TemplateLib.Objects
             }
             else if (typeof(T) == typeof(Template))
             {
-                if (variableValue is not Template value) return this;
+                if (!(variableValue is Template value)) return this;
 
                 _variableString.Remove(variableName);
                 if (_variableTemplates.ContainsKey(variableName) && !_variableTemplates.Remove(variableName))
@@ -207,7 +207,7 @@ namespace TemplateLib.Objects
 
         public override bool Equals(object obj)
         {
-            if (obj is not Template template)
+            if (!(obj is Template template))
             {
                 return false;
             }
