@@ -198,11 +198,17 @@ namespace TemplateLib.Objects
         }
 
         /**
-         * To write with editor if have or write without it
+         * To write with editors if have or write without it
          */
         public override string ToString()
         {
-            return Editor != null ? Editor(Write()) : Write();
+            var variables = _variableString
+                .Concat(_variableTemplates.Select(
+                        pair => new KeyValuePair<string, string>(pair.Key, pair.Value.ToString())
+                    )
+                )
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            return Editor != null ? Editor(Write(variables, "")) : Write(variables, "");
         }
 
         public override bool Equals(object obj)

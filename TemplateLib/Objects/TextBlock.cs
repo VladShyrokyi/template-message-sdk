@@ -54,6 +54,7 @@ namespace TemplateLib.Objects
                     copyTemplate.PutVariable(variableName, variableString);
                 }
             });
+            copyTemplate.Editor = GetTemplateEditor();
             return copyTemplate;
         }
 
