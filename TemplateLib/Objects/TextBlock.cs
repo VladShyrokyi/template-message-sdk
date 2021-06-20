@@ -82,6 +82,9 @@ namespace TemplateLib.Objects
                 case TextBlock value:
                     Template.PutVariable(variableName, value.CopyTemplate());
                     break;
+                case Template value:
+                    Template.PutVariable(variableName, value);
+                    break;
                 case string value:
                     Template.PutVariable(variableName, value);
                     break;
@@ -121,6 +124,44 @@ namespace TemplateLib.Objects
                     variableName => variableName,
                     variableName => Template.GetVariable<T>(variableName)!
                 );
+        }
+
+        public string WriteWithEditor()
+        {
+            return Template.ToString();
+        }
+
+        public string WriteWithoutEditor()
+        {
+            return Template.Write();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not TextBlock anotherBlock)
+            {
+                return false;
+            }
+
+            if (!Equals(anotherBlock.Template, Template))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        protected bool Equals(TextBlock other)
+        {
+            return _variablesName.Equals(other._variablesName) && Template.Equals(other.Template);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (_variablesName.GetHashCode() * 397) ^ Template.GetHashCode();
+            }
         }
     }
 }
