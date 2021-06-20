@@ -18,6 +18,7 @@ namespace TemplateLib.Objects
         public TextBlock(string template)
         {
             Template = new Template(template);
+            _variablesName = Template.GetSelectors();
         }
 
         public TextBlock(string template, Dictionary<string, string> variables) : this(template)
@@ -70,8 +71,8 @@ namespace TemplateLib.Objects
 
         public TextBlock PutVariable<T>(string variableName, T? variableValue) where T : class
         {
-            if (variableValue == null || typeof(T) != typeof(string) || typeof(T) != typeof(Template) ||
-                typeof(T) != typeof(TextBlock))
+            if (variableValue == null || (typeof(T) != typeof(string) && typeof(T) != typeof(Template) &&
+                typeof(T) != typeof(TextBlock)))
             {
                 return this;
             }
