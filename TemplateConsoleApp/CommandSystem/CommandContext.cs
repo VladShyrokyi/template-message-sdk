@@ -6,9 +6,9 @@ namespace TemplateConsoleApp.CommandSystem
 {
     internal class CommandContext
     {
-        public ITelegramBotClient BotClient;
-        public CancellationToken Token;
-        public Update Update;
+        public readonly ITelegramBotClient BotClient;
+        public readonly CancellationToken Token;
+        public readonly Update Update;
 
         public CommandContext(ITelegramBotClient botClient, CancellationToken token, Update update)
         {
