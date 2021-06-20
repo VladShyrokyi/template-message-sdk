@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using TemplateLib.Factory;
 using TemplateLib.Objects;
 
@@ -24,10 +25,23 @@ namespace TemplateConsoleApp.CommandSystem
 
         public override Task<Message> Execute()
         {
-            var result = FetchAndDeserialize().Result;
+            const string title = "TITLE";
+            const string body = "BODY";
+            var headTextBlock = new TextBlock($"Response from %[{title}]%")
+                .PutVariable(title, Url)
+                .SetTemplateEditor(text => $"<b>{text}</b>");
+            var bodyTextBlock = new TextBlock();
+            try
+            {
+                var result = FetchAndDeserialize().Result;
+                bodyTextBlock = result.Select(PostHandler).Merge("VAR", "\n");
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine($"Invalid json: {exception}");
+            }
 
-            var block = result.Select(PostHandler)
-                .Merge("VAR", "\n");
+            var block = TextBlockFactory.CreateText("VAR", "\n", headTextBlock, bodyTextBlock);
 
             var str = block.WriteWithEditor();
             if (str.Length >= MaxCharCount)
@@ -38,6 +52,7 @@ namespace TemplateConsoleApp.CommandSystem
             return BotClient.SendTextMessageAsync(
                 Update.Message.Chat,
                 str,
+                ParseMode.Html,
                 cancellationToken: Token
             );
         }
@@ -78,7 +93,6 @@ namespace TemplateConsoleApp.CommandSystem
             using var jsonTextReader = new JsonTextReader(streamReader);
             try
             {
-
                 return _jsonSerializer.Deserialize<IEnumerable<JsonPostResponse>>(jsonTextReader);
             }
             catch (JsonReaderException e)
