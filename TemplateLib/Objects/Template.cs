@@ -96,7 +96,7 @@ namespace TemplateLib.Objects
             }
             else if (typeof(T) == typeof(Template))
             {
-                if (!(variableValue is Template value)) return this;
+                if (variableValue is not Template value) return this;
 
                 _variableString.Remove(variableName);
                 if (_variableTemplates.ContainsKey(variableName) && !_variableTemplates.Remove(variableName))
@@ -197,6 +197,9 @@ namespace TemplateLib.Objects
             return result;
         }
 
+        /**
+         * To write with editor if have or write without it
+         */
         public override string ToString()
         {
             return Editor != null ? Editor(Write()) : Write();
@@ -204,7 +207,7 @@ namespace TemplateLib.Objects
 
         public override bool Equals(object obj)
         {
-            if (!(obj is Template template))
+            if (obj is not Template template)
             {
                 return false;
             }
@@ -219,31 +222,17 @@ namespace TemplateLib.Objects
                 return false;
             }
 
-            if ((from selector in template.GetSelectors()
-                where !_selectors.ContainsKey(selector)
-                select selector).Count() != 0)
+            if (template.GetSelectors().Count(s => !_selectors.ContainsKey(s)) != 0)
             {
                 return false;
             }
 
-            if ((from pair in _variableString
-                    let variableName = pair.Key
-                    let variableValue = pair.Value
-                    let variableString = template.GetVariable<string>(variableName)
-                    where variableString != variableValue
-                    select variableValue
-                ).Any())
+            if (_variableString.Any(pair => template.GetVariable<string>(pair.Key) != pair.Value))
             {
                 return false;
             }
 
-            if ((from pair in _variableTemplates
-                    let variableName = pair.Key
-                    let variableValue = pair.Value
-                    let variableTemplate = template.GetVariable<Template>(variableName)
-                    where variableTemplate != variableValue
-                    select variableValue
-                ).Any())
+            if (_variableTemplates.Any(pair => template.GetVariable<Template>(pair.Key) != pair.Value))
             {
                 return false;
             }
