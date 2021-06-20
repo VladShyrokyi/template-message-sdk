@@ -53,7 +53,7 @@
         </Reference>
         <Reference Include="System.Xml" />
         <Reference Include="Telegram.Bot, Version=16.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\packages\Telegram.Bot.16.0.0-alpha.2\lib\net45\Telegram.Bot.dll</HintPath>
+          <HintPath>..\packages\Telegram.Bot.16.0.0\lib\net45\Telegram.Bot.dll</HintPath>
           <Private>True</Private>
         </Reference>
         <Reference Include="Telegram.Bot.Extensions.Polling, Version=0.2.0.0, Culture=neutral, PublicKeyToken=null">
@@ -62,7 +62,14 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Program.cs" />
+        <Compile Include="CommandSystem\CommandContext.cs" />
+        <Compile Include="CommandSystem\ExampleCommandHandler.cs" />
+        <Compile Include="CommandSystem\GetJsonCommand.cs" />
+        <Compile Include="CommandSystem\ICommandHandler.cs" />
+        <Compile Include="CommandSystem\TelegramBotCommand.cs" />
+        <Compile Include="ExampleTelegramBotApplication.cs" />
+        <Compile Include="MessageSystem\ExampleMessageHandler.cs" />
+        <Compile Include="MessageSystem\IMessageHandler.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>

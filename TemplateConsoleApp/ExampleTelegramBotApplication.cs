@@ -1,21 +1,22 @@
 ﻿using System;
-using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Extensions.Polling;
-using TemplateLib.Factory;
-using TemplateLib.Objects;
+using TemplateConsoleApp.CommandSystem;
+using TemplateConsoleApp.MessageSystem;
 
 namespace TemplateConsoleApp
 {
-    internal static class Program
+    internal static class ExampleTelegramBotApplication
     {
         private const string Token = "";
         private const string ExceptionChatId = "";
         private static readonly ITelegramBotClient BotClient = new TelegramBotClient(Token);
+        private static readonly IMessageHandler MessageHandler = new ExampleMessageHandler();
+        private static readonly ICommandHandler CommandHandler = new ExampleCommandHandler();
 
         public static async Task Main(string[] args)
         {
@@ -43,7 +44,18 @@ namespace TemplateConsoleApp
                 Console.WriteLine($"        Chat - {message.Chat.Username}({message.Chat.LastName} {message.Chat.FirstName})");
                 Console.WriteLine($"        Data - {message.Date}");
                 Console.WriteLine($"        Text - {message.Text}");
-                await MessageHandler(botClient, token, update);
+                if (message.Text[0].Equals('/'))
+                {
+                    var command = CommandHandler.Create(
+                        message.Text.Substring(1),
+                        new CommandContext(botClient, token, update)
+                    );
+                    await CommandHandler.Run(command);
+                }
+                else
+                {
+                    await MessageHandler.CreateMessage(botClient, token, update);
+                }
             }
         }
 
@@ -53,28 +65,6 @@ namespace TemplateConsoleApp
             {
                 await botClient.SendTextMessageAsync(ExceptionChatId, apiRequestException.ToString(), cancellationToken: token);
             }
-        }
-
-        private static Task<Message> MessageHandler(ITelegramBotClient botClient, CancellationToken token, Update update)
-        {
-            const string user = "USER";
-            const string text = "TEXT";
-            const string time = "TIME";
-            const string append = "APPEND";
-
-            var headBlock = new TextBlock($"User: %[{user}]%%[{append}]%");
-            headBlock.PutVariable(user, update.Message.Chat.Username);
-            headBlock.PutVariable(append, $" ({update.Message.Chat.LastName} {update.Message.Chat.FirstName})");
-
-            var bodyBlock = new TextBlock($"Text: %[{text}]%%[{append}]%");
-            bodyBlock.PutVariable(text, update.Message.Text);
-
-            var bottomBlock = new TextBlock($"Time: %[{time}]%%[{append}]%");
-            bottomBlock.PutVariable(time, update.Message.Date.ToString(CultureInfo.CurrentCulture));
-
-            var block = TextBlockFactory.CreateText("DYN", "\n", headBlock, bodyBlock, bottomBlock);
-
-            return botClient.SendTextMessageAsync(update.Message.Chat, block.WriteWithEditor(), cancellationToken: token);
         }
     }
 }
