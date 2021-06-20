@@ -40,6 +40,7 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Factory\TextBlockExtensions.cs" />
         <Compile Include="Factory\TextBlockFactory.cs" />
         <Compile Include="Objects\Template.cs" />
         <Compile Include="Objects\TextBlock.cs" />
