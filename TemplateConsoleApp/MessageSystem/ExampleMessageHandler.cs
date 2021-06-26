@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using TemplateLib.Factory;
-using TemplateLib.Objects;
+using TemplateLib.Models;
 
 namespace TemplateConsoleApp.MessageSystem
 {

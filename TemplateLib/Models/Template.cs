@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
 
-namespace TemplateLib.Objects
+namespace TemplateLib.Models
 {
     public class Template
     {

@@ -45,8 +45,8 @@
         <Compile Include="Builder\IConditionChecker.cs" />
         <Compile Include="Factory\TextBlockExtensions.cs" />
         <Compile Include="Factory\TextBlockFactory.cs" />
-        <Compile Include="Objects\Template.cs" />
-        <Compile Include="Objects\TextBlock.cs" />
+        <Compile Include="Models\Template.cs" />
+        <Compile Include="Models\TextBlock.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

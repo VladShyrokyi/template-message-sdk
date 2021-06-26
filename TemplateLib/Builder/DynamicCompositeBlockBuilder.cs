@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using TemplateLib.Factory;
-using TemplateLib.Objects;
+using TemplateLib.Models;
 
 namespace TemplateLib.Builder
 {

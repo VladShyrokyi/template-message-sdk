@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using TemplateLib.Factory;
-using TemplateLib.Objects;
+using TemplateLib.Models;
 
 namespace TemplateLib.Builder
 {

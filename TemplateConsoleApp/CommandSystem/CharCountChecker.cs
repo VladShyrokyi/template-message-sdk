@@ -1,6 +1,6 @@
 ﻿using System;
 using TemplateLib.Builder;
-using TemplateLib.Objects;
+using TemplateLib.Models;
 
 namespace TemplateConsoleApp.CommandSystem
 {

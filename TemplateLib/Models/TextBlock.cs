@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TemplateLib.Objects
+namespace TemplateLib.Models
 {
     public class TextBlock
     {

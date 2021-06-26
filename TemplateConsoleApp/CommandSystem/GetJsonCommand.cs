@@ -9,7 +9,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TemplateLib.Builder;
 using TemplateLib.Factory;
-using TemplateLib.Objects;
+using TemplateLib.Models;
 
 namespace TemplateConsoleApp.CommandSystem
 {
