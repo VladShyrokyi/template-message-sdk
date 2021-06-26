@@ -40,6 +40,9 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Builder\CompositeBlockBuilder.cs" />
+        <Compile Include="Builder\DynamicCompositeBlockBuilder.cs" />
+        <Compile Include="Builder\IConditionChecker.cs" />
         <Compile Include="Factory\TextBlockExtensions.cs" />
         <Compile Include="Factory\TextBlockFactory.cs" />
         <Compile Include="Objects\Template.cs" />
