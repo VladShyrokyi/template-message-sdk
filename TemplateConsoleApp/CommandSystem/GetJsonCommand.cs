@@ -27,21 +27,42 @@ namespace TemplateConsoleApp.CommandSystem
         {
             const string title = "TITLE";
             const string body = "BODY";
+
+            var titleTemplate = $"%[{title}]%";
+            var bodyTemplate = $"\n%[{body}]%";
+
+            var template = "";
+            var variables = new Dictionary<string, TextBlock>();
+            var charCountLimit = MaxCharCount;
+
             var headTextBlock = new TextBlock($"Response from %[{title}]%")
                 .PutVariable(title, Url)
                 .SetTemplateEditor(text => $"<b>{text}</b>");
-            var bodyTextBlock = new TextBlock();
+            if (charCountLimit - headTextBlock.GetCharCountWithEditor() >= 0)
+            {
+                template += titleTemplate;
+                variables.Add(title, headTextBlock);
+                charCountLimit -= headTextBlock.GetCharCountWithEditor();
+            }
+
             try
             {
                 var result = FetchAndDeserialize().Result;
-                bodyTextBlock = result.Select(PostHandler).Merge("VAR", "\n");
+                var bodyTextBlock = Calculate(result, charCountLimit, "\n")
+                    .Merge("VAR", "\n");
+                if (charCountLimit - bodyTextBlock.GetCharCountWithEditor() >= 0)
+                {
+                    template += bodyTemplate;
+                    variables.Add(body, bodyTextBlock);
+                    charCountLimit -= bodyTextBlock.GetCharCountWithEditor();
+                }
             }
             catch (Exception exception)
             {
                 Console.WriteLine($"Invalid json: {exception}");
             }
 
-            var block = TextBlockFactory.CreateText("VAR", "\n", headTextBlock, bodyTextBlock);
+            var block = TextBlockFactory.CreateText(template, variables);
 
             var str = block.WriteWithEditor();
             if (str.Length >= MaxCharCount)
@@ -55,6 +76,23 @@ namespace TemplateConsoleApp.CommandSystem
                 ParseMode.Html,
                 cancellationToken: Token
             );
+        }
+
+        private static IEnumerable<TextBlock> Calculate(IEnumerable<JsonPostResponse> posts, int maxCharCount, string separator)
+        {
+            var blocks = new List<TextBlock>();
+            return posts.Aggregate((blocks, maxCharCount), (container, response) =>
+            {
+                var block = PostHandler(response);
+                var charCount = block.GetCharCountWithEditor() + separator.Length;
+                if (container.maxCharCount - charCount <= 0)
+                    return container;
+
+                container.blocks.Add(block);
+                container.maxCharCount -= charCount;
+
+                return container;
+            }).blocks;
         }
 
         private static TextBlock PostHandler(JsonPostResponse post)
