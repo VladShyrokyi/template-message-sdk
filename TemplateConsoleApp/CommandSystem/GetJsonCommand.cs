@@ -66,7 +66,7 @@ namespace TemplateConsoleApp.CommandSystem
                     new DynamicCompositeBlockBuilder(charCountChecker, "VAR", "\n"),
                     (blockBuilder, response) =>
                     {
-                        var postBlock = PostHandler(response, charCountChecker.Limit);
+                        var postBlock = PostHandler(response);
                         blockBuilder.DynamicPut(postBlock);
                         return blockBuilder;
                     }
@@ -74,20 +74,27 @@ namespace TemplateConsoleApp.CommandSystem
                 .Build();
         }
 
-        private static TextBlock PostHandler(JsonPostResponse post, int limit)
+        private static TextBlock PostHandler(JsonPostResponse post)
         {
-            const string userId = "USER";
-            const string postId = "ID";
-            const string title = "TITLE";
-            const string body = "BODY";
+            var user = CreateField("User", post.userId.ToString());
+            var postId = CreateField("\nPost", post.id.ToString());
+            var title = CreateField("\nTitle", post.title)
+                .SetTemplateEditor(str => $"<b>{str}</b>");
+            var body = CreateField("\nBody: ", post.body);
+            var append = TextBlockFactory.CreateText("VAR", "\n");
 
-            var userTextBlock = TextBlockFactory.CreateText(userId, post.userId.ToString());
-            var postIdTextBlock = TextBlockFactory.CreateText(postId, post.id.ToString());
-            var titleTextBlock = TextBlockFactory.CreateText(title, post.title);
-            var bodyTextBlock = TextBlockFactory.CreateText(body, post.body);
+            return TextBlockFactory.MergeText("VAR", "", user, postId, title, body, append);
+        }
 
-            return new[] {userTextBlock, postIdTextBlock, titleTextBlock, bodyTextBlock}
-                .Merge("VAR", "\n");
+        private static TextBlock CreateField(string labelName, string text)
+        {
+            const string labelVariableName = "NAME";
+            const string textVariableName = "TEXT";
+            var labelTemplate = $"%[{labelVariableName}]%: %[{textVariableName}]%";
+
+            var textBlock = new TextBlock(labelTemplate).PutVariable(labelVariableName, labelName)
+                .PutVariable(textVariableName, text);
+            return textBlock;
         }
 
         private async Task<IEnumerable<JsonPostResponse>> FetchAndDeserialize()
