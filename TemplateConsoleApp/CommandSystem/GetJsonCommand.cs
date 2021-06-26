@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using TemplateLib.Builder;
 using TemplateLib.Factory;
 using TemplateLib.Objects;
 
@@ -28,71 +29,42 @@ namespace TemplateConsoleApp.CommandSystem
             const string title = "TITLE";
             const string body = "BODY";
 
-            var titleTemplate = $"%[{title}]%";
-            var bodyTemplate = $"\n%[{body}]%";
+            var charCountChecker = new CharCountChecker(MaxCharCount);
+            var builder = new CompositeBlockBuilder(charCountChecker);
 
-            var template = "";
-            var variables = new Dictionary<string, TextBlock>();
-            var charCountLimit = MaxCharCount;
+            builder.Add(title, $"%[{title}]%");
+            builder.Add(body, $"\n%[{body}]%");
 
-            var headTextBlock = new TextBlock($"Response from %[{title}]%")
-                .PutVariable(title, Url)
-                .SetTemplateEditor(text => $"<b>{text}</b>");
-            if (charCountLimit - headTextBlock.GetCharCountWithEditor() >= 0)
-            {
-                template += titleTemplate;
-                variables.Add(title, headTextBlock);
-                charCountLimit -= headTextBlock.GetCharCountWithEditor();
-            }
+            builder.Put(title, TextBlockFactory.CreateText($"Response from %[{title}]%", Url)
+                .SetTemplateEditor(text => $"<b>{text}</b>")
+            );
 
             try
             {
                 var result = FetchAndDeserialize().Result;
-                var bodyTextBlock = Calculate(result, charCountLimit, "\n")
-                    .Merge("VAR", "\n");
-                if (charCountLimit - bodyTextBlock.GetCharCountWithEditor() >= 0)
-                {
-                    template += bodyTemplate;
-                    variables.Add(body, bodyTextBlock);
-                    charCountLimit -= bodyTextBlock.GetCharCountWithEditor();
-                }
+                var localCharCount = new CharCountChecker(charCountChecker.Limit);
+                var bodyTextBlock = result.Aggregate(
+                    new DynamicCompositeBlockBuilder(localCharCount, "VAR", "\n"),
+                    (blockBuilder, response) =>
+                    {
+                        var postBlock = PostHandler(response);
+                        blockBuilder.DynamicPut(postBlock);
+                        return blockBuilder;
+                    }
+                ).Build();
+                builder.Put(body, bodyTextBlock);
             }
             catch (Exception exception)
             {
                 Console.WriteLine($"Invalid json: {exception}");
             }
 
-            var block = TextBlockFactory.CreateText(template, variables);
-
-            var str = block.WriteWithEditor();
-            if (str.Length >= MaxCharCount)
-            {
-                str = str.Substring(0, MaxCharCount);
-            }
-
             return BotClient.SendTextMessageAsync(
                 Update.Message.Chat,
-                str,
+                builder.Build().WriteWithEditor(),
                 ParseMode.Html,
                 cancellationToken: Token
             );
-        }
-
-        private static IEnumerable<TextBlock> Calculate(IEnumerable<JsonPostResponse> posts, int maxCharCount, string separator)
-        {
-            var blocks = new List<TextBlock>();
-            return posts.Aggregate((blocks, maxCharCount), (container, response) =>
-            {
-                var block = PostHandler(response);
-                var charCount = block.GetCharCountWithEditor() + separator.Length;
-                if (container.maxCharCount - charCount <= 0)
-                    return container;
-
-                container.blocks.Add(block);
-                container.maxCharCount -= charCount;
-
-                return container;
-            }).blocks;
         }
 
         private static TextBlock PostHandler(JsonPostResponse post)
