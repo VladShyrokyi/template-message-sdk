@@ -35,7 +35,8 @@ namespace TemplateConsoleApp.CommandSystem
             builder.Add(title, $"%[{title}]%");
             builder.Add(body, $"\n%[{body}]%");
 
-            builder.Put(title, TextBlockFactory.CreateText($"Response from %[{title}]%", Url)
+            builder.Put(title, new TextBlock($"Response from %[{title}]%")
+                .PutVariable(title, Url)
                 .SetTemplateEditor(text => $"<b>{text}</b>")
             );
 
