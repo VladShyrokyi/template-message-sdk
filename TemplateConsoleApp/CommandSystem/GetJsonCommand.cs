@@ -40,16 +40,19 @@ namespace TemplateConsoleApp.CommandSystem
                 .SetTemplateEditor(text => $"<b>{text}</b>")
             );
 
-            try
+            var data = GetData();
+            if (data == null)
             {
-                var result = FetchAndDeserialize().Result;
-                var bodyTextBlock = CreateBody(result, charCountChecker.Limit);
-                builder.Put(body, bodyTextBlock);
+                return BotClient.SendTextMessageAsync(
+                    Update.Message.Chat,
+                    builder.Build().WriteWithEditor(),
+                    ParseMode.Html,
+                    cancellationToken: Token
+                );
             }
-            catch (Exception exception)
-            {
-                Console.WriteLine($"Invalid json: {exception}");
-            }
+
+            var bodyTextBlock = CreateBody(data, charCountChecker.Limit);
+            builder.Put(body, bodyTextBlock);
 
             return BotClient.SendTextMessageAsync(
                 Update.Message.Chat,
@@ -57,6 +60,19 @@ namespace TemplateConsoleApp.CommandSystem
                 ParseMode.Html,
                 cancellationToken: Token
             );
+        }
+
+        private IEnumerable<JsonPostResponse>? GetData()
+        {
+            try
+            {
+                return FetchAndDeserialize().Result;
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine($"Invalid json: {exception}");
+                return null;
+            }
         }
 
         private static TextBlock CreateBody(IEnumerable<JsonPostResponse> result, int limit)
