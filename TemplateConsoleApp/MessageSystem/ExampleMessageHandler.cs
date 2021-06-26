@@ -27,7 +27,7 @@ namespace TemplateConsoleApp.MessageSystem
             var bottomBlock = new TextBlock($"Time: %[{time}]%%[{append}]%");
             bottomBlock.PutVariable(time, update.Message.Date.ToString(CultureInfo.CurrentCulture));
 
-            var block = TextBlockFactory.CreateText("DYN", "\n", headBlock, bodyBlock, bottomBlock);
+            var block = TextBlockFactory.MergeText("DYN", "\n", headBlock, bodyBlock, bottomBlock);
 
             return botClient.SendTextMessageAsync(update.Message.Chat, block.WriteWithEditor(), cancellationToken: token);
         }

@@ -8,7 +8,7 @@ namespace TemplateLib.Factory
     {
         public static TextBlock Merge(this IEnumerable<TextBlock> blocks, string dynamicVariableName, string separator)
         {
-            return TextBlockFactory.CreateText(dynamicVariableName, separator, blocks.ToArray());
+            return TextBlockFactory.MergeText(dynamicVariableName, separator, blocks.ToArray());
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using TemplateLib.Objects;
 
 namespace TemplateLib.Factory
@@ -11,7 +12,12 @@ namespace TemplateLib.Factory
                 .PutVariable(variableName, variableValue);
         }
 
-        public static TextBlock CreateText(string dynamicVariableName, string separator, params TextBlock[] textBlocks)
+        public static TextBlock CreateText(string template, Dictionary<string, TextBlock> variableValue)
+        {
+            return new TextBlock(template).PutVariables(variableValue);
+        }
+
+        public static TextBlock MergeText(string dynamicVariableName, string separator, params TextBlock[] textBlocks)
         {
             return textBlocks.Aggregate(
                 (block: new TextBlock(), template: "", counter: 0, lastTextBlock: new TextBlock()),
