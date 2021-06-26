@@ -42,16 +42,7 @@ namespace TemplateConsoleApp.CommandSystem
             try
             {
                 var result = FetchAndDeserialize().Result;
-                var localCharCount = new CharCountChecker(charCountChecker.Limit);
-                var bodyTextBlock = result.Aggregate(
-                    new DynamicCompositeBlockBuilder(localCharCount, "VAR", "\n"),
-                    (blockBuilder, response) =>
-                    {
-                        var postBlock = PostHandler(response);
-                        blockBuilder.DynamicPut(postBlock);
-                        return blockBuilder;
-                    }
-                ).Build();
+                var bodyTextBlock = CreateBody(result, charCountChecker);
                 builder.Put(body, bodyTextBlock);
             }
             catch (Exception exception)
@@ -65,6 +56,21 @@ namespace TemplateConsoleApp.CommandSystem
                 ParseMode.Html,
                 cancellationToken: Token
             );
+        }
+
+        private static TextBlock CreateBody(IEnumerable<JsonPostResponse> result, CharCountChecker charCountChecker)
+        {
+            var localCharCount = new CharCountChecker(charCountChecker.Limit);
+            return result.Aggregate(
+                    new DynamicCompositeBlockBuilder(localCharCount, "VAR", "\n"),
+                    (blockBuilder, response) =>
+                    {
+                        var postBlock = PostHandler(response);
+                        blockBuilder.DynamicPut(postBlock);
+                        return blockBuilder;
+                    }
+                )
+                .Build();
         }
 
         private static TextBlock PostHandler(JsonPostResponse post)
