@@ -44,17 +44,24 @@ namespace TemplateConsoleApp
                 Console.WriteLine($"        Chat - {message.Chat.Username}({message.Chat.LastName} {message.Chat.FirstName})");
                 Console.WriteLine($"        Data - {message.Date}");
                 Console.WriteLine($"        Text - {message.Text}");
-                if (message.Text[0].Equals('/') && message.Text.Length > 1)
+                try
                 {
-                    var command = CommandHandler.Create(
-                        message.Text.Substring(1),
-                        new CommandContext(botClient, token, update)
-                    );
-                    await CommandHandler.Run(command);
+                    if (message.Text[0].Equals('/') && message.Text.Length > 1)
+                    {
+                        var command = CommandHandler.Create(
+                            message.Text.Substring(1),
+                            new CommandContext(botClient, token, update)
+                        );
+                        await CommandHandler.Run(command);
+                    }
+                    else
+                    {
+                        await MessageHandler.CreateMessage(botClient, token, update);
+                    }
                 }
-                else
+                catch (Exception e)
                 {
-                    await MessageHandler.CreateMessage(botClient, token, update);
+                    Console.WriteLine(e);
                 }
             }
         }
