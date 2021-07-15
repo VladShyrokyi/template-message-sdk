@@ -131,11 +131,9 @@ namespace TemplateLib.Models
 
         public string Write()
         {
-            var variables = _variableString
-                .Concat(_variableTemplates.Select(
-                        pair => new KeyValuePair<string, string>(pair.Key, pair.Value.Write())
-                    )
-                )
+            var variables = _variableString.Concat(_variableTemplates.Select(
+                    pair => new KeyValuePair<string, string>(pair.Key, pair.Value.Write())
+                ))
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
 
             return Write(variables, "");
@@ -143,22 +141,19 @@ namespace TemplateLib.Models
 
         public string Write(Func<string, string> childTemplateEditor)
         {
-            var variables = _variableString
-                .Concat(_variableTemplates.Select(
-                        pair => new KeyValuePair<string, string>(pair.Key, pair.Value.Write(childTemplateEditor))
-                    )
-                )
+            var variables = _variableString.Concat(_variableTemplates.Select(
+                    pair => new KeyValuePair<string, string>(pair.Key, pair.Value.Write(childTemplateEditor))
+                ))
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
+
             return Write(variables, "");
         }
 
         public string Write(string emptyVariables)
         {
-            var variables = _variableString
-                .Concat(_variableTemplates.Select(pair =>
-                        new KeyValuePair<string, string>(pair.Key, pair.Value.Write(emptyVariables))
-                    )
-                )
+            var variables = _variableString.Concat(_variableTemplates.Select(
+                    pair => new KeyValuePair<string, string>(pair.Key, pair.Value.Write(emptyVariables))
+                ))
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
 
             return Write(variables, emptyVariables);
@@ -202,13 +197,14 @@ namespace TemplateLib.Models
          */
         public override string ToString()
         {
-            var variables = _variableString
-                .Concat(_variableTemplates.Select(
-                        pair => new KeyValuePair<string, string>(pair.Key, pair.Value.ToString())
-                    )
-                )
+            var variables = _variableString.Concat(_variableTemplates.Select(
+                    pair => new KeyValuePair<string, string>(pair.Key, pair.Value.ToString())
+                ))
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
-            return Editor != null ? Editor(Write(variables, "")) : Write(variables, "");
+
+            return Editor != null
+                ? Editor(Write(variables, ""))
+                : Write(variables, "");
         }
 
         public override bool Equals(object obj)
