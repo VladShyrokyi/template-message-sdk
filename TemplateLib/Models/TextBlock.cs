@@ -41,21 +41,7 @@ namespace TemplateLib.Models
 
         public Template CopyTemplate()
         {
-            var copyTemplate = new Template(Template.TemplateString);
-            _variablesName.ForEach(variableName =>
-            {
-                var variablesTemplate = Template.GetVariable<Template>(variableName);
-                if (variablesTemplate != null)
-                {
-                    copyTemplate.PutVariable(variableName, variablesTemplate);
-                }
-                else if (Template.GetVariable<string>(variableName) is { } variableString)
-                {
-                    copyTemplate.PutVariable(variableName, variableString);
-                }
-            });
-            copyTemplate.Editor = GetTemplateEditor();
-            return copyTemplate;
+            return new Template(Template);
         }
 
         public TextBlock SetTemplateEditor(Func<string, string> editor)

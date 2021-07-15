@@ -34,6 +34,19 @@ namespace TemplateLib.Models
         {
         }
 
+        public Template(Template template) : this(template.TemplateString, template._regex, template.Editor)
+        {
+            foreach (var pair in _variableString)
+            {
+                PutVariable(pair.Key, pair.Value);
+            }
+            foreach (var pair in _variableTemplates)
+            {
+                var childTemplate = new Template(pair.Value);
+                PutVariable(pair.Key, childTemplate);
+            }
+        }
+
         public string TemplateString
         {
             get => _template;
