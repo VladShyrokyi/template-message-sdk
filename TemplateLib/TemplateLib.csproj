@@ -40,14 +40,18 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Builder\CompositeBlockBuilder.cs" />
-        <Compile Include="Builder\DynamicCompositeBlockBuilder.cs" />
-        <Compile Include="Builder\IConditionChecker.cs" />
-        <Compile Include="Factory\TextBlockExtensions.cs" />
-        <Compile Include="Factory\TextBlockFactory.cs" />
-        <Compile Include="Models\Template.cs" />
-        <Compile Include="Models\TextBlock.cs" />
-        <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="Block\ITextBlock.cs"/>
+        <Compile Include="Block\SimpleTextBlock.cs"/>
+        <Compile Include="Block\TemplateTextBlock.cs"/>
+        <Compile Include="Builder\CompositeBlockBuilder.cs"/>
+        <Compile Include="Builder\DynamicCompositeBlockBuilder.cs"/>
+        <Compile Include="Builder\IConditionChecker.cs"/>
+        <Compile Include="DefaultRegex.cs"/>
+        <Compile Include="Editor\ITextEditor.cs"/>
+        <Compile Include="Factory\TextBlockFactory.cs"/>
+        <Compile Include="Properties\AssemblyInfo.cs"/>
+        <Compile Include="Writer\ITextWriter.cs"/>
+        <Compile Include="Writer\RegexTextWriter.cs"/>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

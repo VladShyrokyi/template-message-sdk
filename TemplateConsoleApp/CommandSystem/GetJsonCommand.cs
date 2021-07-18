@@ -7,18 +7,20 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using TemplateLib;
+using TemplateLib.Block;
 using TemplateLib.Builder;
+using TemplateLib.Editor;
 using TemplateLib.Factory;
-using TemplateLib.Models;
 
 namespace TemplateConsoleApp.CommandSystem
 {
     internal class GetJsonCommand : TelegramBotCommand
     {
-        private readonly HttpClient _httpClient = new HttpClient();
-        private readonly JsonSerializer _jsonSerializer = JsonSerializer.CreateDefault();
         private const string Url = "https://jsonplaceholder.typicode.com/posts";
         private const int MaxCharCount = 4096;
+        private readonly HttpClient _httpClient = new HttpClient();
+        private readonly JsonSerializer _jsonSerializer = JsonSerializer.CreateDefault();
 
         public GetJsonCommand(string name, CommandContext context) : base(name, context)
         {
@@ -32,20 +34,21 @@ namespace TemplateConsoleApp.CommandSystem
             var charCountChecker = new CharCountChecker(MaxCharCount);
             var builder = new CompositeBlockBuilder(charCountChecker);
 
-            builder.Add(title, $"%[{title}]%");
-            builder.Add(body, $"\n%[{body}]%");
+            builder.Add(title, DefaultRegex.CreateSelector(title));
+            builder.Add(body, "\n" + DefaultRegex.CreateSelector(body));
 
-            builder.Put(title, new TextBlock($"Response from %[{title}]%")
-                .PutVariable(title, Url)
-                .SetTemplateEditor(text => $"<b>{text}</b>")
-            );
+            var titleBlock =
+                TextBlockFactory.CreateSimpleEmptyWith($"Response from " + DefaultRegex.CreateSelector(title));
+            titleBlock.PutVariable(title, Url);
+            titleBlock.Editor = new BoldEditor();
+            builder.Put(title, titleBlock);
 
             var data = GetData();
             if (data == null)
             {
                 return BotClient.SendTextMessageAsync(
                     Update.Message.Chat,
-                    builder.Build().WriteWithEditor(),
+                    builder.Build().Write(),
                     ParseMode.Html,
                     cancellationToken: Token
                 );
@@ -56,7 +59,7 @@ namespace TemplateConsoleApp.CommandSystem
 
             return BotClient.SendTextMessageAsync(
                 Update.Message.Chat,
-                builder.Build().WriteWithEditor(),
+                builder.Build().Write(),
                 ParseMode.Html,
                 cancellationToken: Token
             );
@@ -75,11 +78,11 @@ namespace TemplateConsoleApp.CommandSystem
             }
         }
 
-        private static TextBlock CreateBody(IEnumerable<JsonPostResponse> result, int limit)
+        private static ITextBlock CreateBody(IEnumerable<JsonPostResponse> result, int limit)
         {
             var charCountChecker = new CharCountChecker(limit);
             return result.Aggregate(
-                    new DynamicCompositeBlockBuilder(charCountChecker, "VAR", "\n"),
+                    new DynamicCompositeBlockBuilder("POST", "\n", charCountChecker),
                     (blockBuilder, response) =>
                     {
                         var postBlock = PostHandler(response);
@@ -90,26 +93,28 @@ namespace TemplateConsoleApp.CommandSystem
                 .Build();
         }
 
-        private static TextBlock PostHandler(JsonPostResponse post)
+        private static ITextBlock PostHandler(JsonPostResponse post)
         {
             var user = CreateField("User", post.userId.ToString());
             var postId = CreateField("\nPost", post.id.ToString());
-            var title = CreateField("\nTitle", post.title)
-                .SetTemplateEditor(str => $"<b>{str}</b>");
+            var title = CreateField("\nTitle", post.title);
+            title.Editor = new BoldEditor();
             var body = CreateField("\nBody: ", post.body);
-            var append = TextBlockFactory.CreateText("VAR", "\n");
+            var append = TextBlockFactory.CreateSimpleWith("\n");
 
-            return TextBlockFactory.MergeText("VAR", "", user, postId, title, body, append);
+            return TextBlockFactory.CreateTemplateWith("", user, postId, title, body, append);
         }
 
-        private static TextBlock CreateField(string labelName, string text)
+        private static SimpleTextBlock CreateField(string labelName, string text)
         {
             const string labelVariableName = "NAME";
             const string textVariableName = "TEXT";
-            var labelTemplate = $"%[{labelVariableName}]%: %[{textVariableName}]%";
 
-            var textBlock = new TextBlock(labelTemplate).PutVariable(labelVariableName, labelName)
-                .PutVariable(textVariableName, text);
+            var textBlock = TextBlockFactory.CreateSimpleEmptyWith(
+                $"{DefaultRegex.CreateSelector(labelVariableName)}: {DefaultRegex.CreateSelector(textVariableName)}"
+            );
+            textBlock.PutVariable(labelVariableName, labelName);
+            textBlock.PutVariable(textVariableName, text);
             return textBlock;
         }
 
@@ -138,6 +143,19 @@ namespace TemplateConsoleApp.CommandSystem
             catch (JsonReaderException e)
             {
                 throw new JsonSerializationException($"Invalid json: {e}");
+            }
+        }
+
+        private class BoldEditor : ITextEditor
+        {
+            public ITextEditor Copy()
+            {
+                return new BoldEditor();
+            }
+
+            public string ToEditing(string text)
+            {
+                return $"<b>{text}</b>";
             }
         }
     }

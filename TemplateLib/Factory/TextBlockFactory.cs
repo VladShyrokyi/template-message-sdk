@@ -1,43 +1,63 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using TemplateLib.Models;
+using TemplateLib.Block;
+using TemplateLib.Builder;
+using TemplateLib.Writer;
 
 namespace TemplateLib.Factory
 {
     public static class TextBlockFactory
     {
-        public static TextBlock CreateText(string variableName, string variableValue)
+        public static SimpleTextBlock CreateSimpleEmptyWith(string templatePart)
         {
-            return new TextBlock($"%[{variableName}]%")
-                .PutVariable(variableName, variableValue);
+            return new SimpleTextBlock(new RegexTextWriter(templatePart, DefaultRegex.Regex), null);
         }
 
-        public static TextBlock CreateText(string template, Dictionary<string, TextBlock> variableValue)
+        public static TemplateTextBlock CreateTemplateEmptyWith(string templatePart)
         {
-            return new TextBlock(template).PutVariables(variableValue);
+            return new TemplateTextBlock(new RegexTextWriter(templatePart, DefaultRegex.Regex), null);
         }
 
-        public static TextBlock MergeText(string dynamicVariableName, string separator, params TextBlock[] textBlocks)
+        public static SimpleTextBlock CreateSimpleWith(string template, Dictionary<string, string> variables)
         {
-            return textBlocks.Aggregate(
-                (block: new TextBlock(), template: "", counter: 0, lastTextBlock: new TextBlock()),
-                (container, textBlock) =>
-                {
-                    if (!Equals(container.lastTextBlock, new TextBlock()))
-                    {
-                        container.template += separator;
-                    }
+            var block = new SimpleTextBlock(new RegexTextWriter(template, DefaultRegex.Regex), null);
+            foreach (var pair in variables)
+            {
+                block.PutVariable(pair.Key, pair.Value);
+            }
 
-                    var variableName = dynamicVariableName + "_" + container.counter;
+            return block;
+        }
 
-                    container.template += $"%[{variableName}]%";
-                    container.block.SetTemplate(container.template);
-                    container.block.PutVariable(variableName, textBlock.CopyTemplate());
-                    container.lastTextBlock = textBlock;
-                    container.counter++;
-                    return container;
-                })
-                .block;
+        public static SimpleTextBlock CreateSimpleWith(string variable)
+        {
+            var block = new SimpleTextBlock(new RegexTextWriter(
+                DefaultRegex.CreateSelector(DefaultRegex.DynamicVariableName),
+                DefaultRegex.Regex
+            ), null);
+            block.PutVariable(DefaultRegex.DynamicVariableName, variable);
+            return block;
+        }
+
+        public static TemplateTextBlock CreateTemplateWith(string template, Dictionary<string, ITextBlock> variables)
+        {
+            var block = new TemplateTextBlock(new RegexTextWriter(template, DefaultRegex.Regex), null);
+            foreach (var pair in variables)
+            {
+                block.PutVariable(pair.Key, pair.Value);
+            }
+
+            return block;
+        }
+
+        public static TemplateTextBlock CreateTemplateWith(string separator, params ITextBlock[] variables)
+        {
+            var builder = new DynamicCompositeBlockBuilder(DefaultRegex.DynamicVariableName, separator);
+            foreach (var block in variables)
+            {
+                builder.DynamicPut(block);
+            }
+
+            return builder.Build();
         }
     }
 }

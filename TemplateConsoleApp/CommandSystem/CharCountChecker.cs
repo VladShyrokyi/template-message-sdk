@@ -1,26 +1,25 @@
-﻿using System;
+﻿using TemplateLib.Block;
 using TemplateLib.Builder;
-using TemplateLib.Models;
 
 namespace TemplateConsoleApp.CommandSystem
 {
     public class CharCountChecker : IConditionChecker
     {
-        public int Limit { get; private set; } = 0;
-
         public CharCountChecker(int maxCharCount)
         {
             Limit = maxCharCount;
         }
 
-        public bool Check(TextBlock block)
+        public int Limit { get; private set; } = 0;
+
+        public bool Check(ITextBlock block)
         {
-            return Limit - block.GetCharCountWithEditor() >= 0;
+            return Limit - block.Write().Length >= 0;
         }
 
-        public void Update(TextBlock block)
+        public void Update(ITextBlock block)
         {
-            Limit -= block.GetCharCountWithEditor();
+            Limit -= block.Write().Length;
         }
     }
 }

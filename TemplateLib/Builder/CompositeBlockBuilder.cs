@@ -1,47 +1,47 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TemplateLib.Block;
 using TemplateLib.Factory;
-using TemplateLib.Models;
 
 namespace TemplateLib.Builder
 {
     public class CompositeBlockBuilder
     {
+        private readonly IConditionChecker? _conditionChecker;
         private readonly Dictionary<string, string> _templateParts = new Dictionary<string, string>();
-        private readonly Dictionary<string, TextBlock> _variables = new Dictionary<string, TextBlock>();
+        private readonly Dictionary<string, ITextBlock> _variables = new Dictionary<string, ITextBlock>();
 
-        protected readonly IConditionChecker ConditionChecker;
-
-        public CompositeBlockBuilder(IConditionChecker conditionChecker)
+        public CompositeBlockBuilder(IConditionChecker? conditionChecker = null)
         {
-            ConditionChecker = conditionChecker;
+            _conditionChecker = conditionChecker;
         }
 
         public CompositeBlockBuilder Add(string variableName, string templatePart)
         {
-            var checkedBlock = new TextBlock(templatePart);
-            if (!ConditionChecker.Check(checkedBlock))
+            var checkedBlock = TextBlockFactory.CreateSimpleEmptyWith(templatePart);
+            if (IsNotContinueAdd(checkedBlock))
                 return this;
 
             _templateParts.Add(variableName, templatePart);
-            ConditionChecker.Update(checkedBlock);
+            UpdateIfCan(checkedBlock);
+
             return this;
         }
 
-        public CompositeBlockBuilder Put(string variableName, TextBlock? block)
+        public CompositeBlockBuilder Put(string variableName, ITextBlock? block)
         {
             if (block == null)
                 return this;
 
-            if (!ConditionChecker.Check(block))
+            if (IsNotContinueAdd(block))
                 return this;
 
             _variables.Add(variableName, block);
-            ConditionChecker.Update(block);
+            UpdateIfCan(block);
             return this;
         }
 
-        public TextBlock Build()
+        public TemplateTextBlock Build()
         {
             var template = "";
             _variables.Keys.ToList().ForEach(variableName =>
@@ -49,7 +49,17 @@ namespace TemplateLib.Builder
                 if (_templateParts.TryGetValue(variableName, out string templatePart))
                     template += templatePart;
             });
-            return TextBlockFactory.CreateText(template, _variables);
+            return TextBlockFactory.CreateTemplateWith(template, _variables);
+        }
+
+        protected bool IsNotContinueAdd(ITextBlock checkedBlock)
+        {
+            return _conditionChecker != null && !_conditionChecker.Check(checkedBlock);
+        }
+
+        protected void UpdateIfCan(ITextBlock checkedBlock)
+        {
+            _conditionChecker?.Update(checkedBlock);
         }
     }
 }

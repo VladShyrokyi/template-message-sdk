@@ -1,11 +1,11 @@
-﻿using TemplateLib.Models;
+﻿using TemplateLib.Block;
 
 namespace TemplateLib.Builder
 {
     public interface IConditionChecker
     {
-        bool Check(TextBlock block);
+        bool Check(ITextBlock block);
 
-        void Update(TextBlock block);
+        void Update(ITextBlock block);
     }
 }

@@ -3,8 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using TemplateLib;
 using TemplateLib.Factory;
-using TemplateLib.Models;
 
 namespace TemplateConsoleApp.MessageSystem
 {
@@ -17,19 +17,25 @@ namespace TemplateConsoleApp.MessageSystem
             const string time = "TIME";
             const string append = "APPEND";
 
-            var headBlock = new TextBlock($"User: %[{user}]%%[{append}]%");
+            var headBlock = TextBlockFactory.CreateSimpleEmptyWith(
+                $"User: {DefaultRegex.CreateSelector(user)}{DefaultRegex.CreateSelector(append)}"
+            );
             headBlock.PutVariable(user, update.Message.Chat.Username);
             headBlock.PutVariable(append, $" ({update.Message.Chat.LastName} {update.Message.Chat.FirstName})");
 
-            var bodyBlock = new TextBlock($"Text: %[{text}]%%[{append}]%");
+            var bodyBlock = TextBlockFactory.CreateSimpleEmptyWith(
+                $"Text: {DefaultRegex.CreateSelector(text)}{DefaultRegex.CreateSelector(append)}"
+            );
             bodyBlock.PutVariable(text, update.Message.Text);
 
-            var bottomBlock = new TextBlock($"Time: %[{time}]%%[{append}]%");
+            var bottomBlock = TextBlockFactory.CreateSimpleEmptyWith(
+                $"Time: {DefaultRegex.CreateSelector(time)}{DefaultRegex.CreateSelector(append)}"
+            );
             bottomBlock.PutVariable(time, update.Message.Date.ToString(CultureInfo.CurrentCulture));
 
-            var block = TextBlockFactory.MergeText("DYN", "\n", headBlock, bodyBlock, bottomBlock);
+            var block = TextBlockFactory.CreateTemplateWith("\n", headBlock, bodyBlock, bottomBlock);
 
-            return botClient.SendTextMessageAsync(update.Message.Chat, block.WriteWithEditor(), cancellationToken: token);
+            return botClient.SendTextMessageAsync(update.Message.Chat, block.Write(), cancellationToken: token);
         }
     }
 }
