@@ -183,7 +183,7 @@ namespace TemplateLib.Models
 
                 if (!selectorsName.Contains(variableName))
                 {
-                    break;
+                    continue;
                 }
 
                 string selector = _selectors[variableName];
