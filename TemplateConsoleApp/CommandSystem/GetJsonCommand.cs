@@ -95,14 +95,16 @@ namespace TemplateConsoleApp.CommandSystem
 
         private static ITextBlock PostHandler(JsonPostResponse post)
         {
-            var user = CreateField("User", post.userId.ToString());
-            var postId = CreateField("\nPost", post.id.ToString());
-            var title = CreateField("\nTitle", post.title);
+            var title = CreateField("Title", post.title);
             title.Editor = new BoldEditor();
-            var body = CreateField("\nBody: ", post.body);
-            var append = TextBlockFactory.CreateSimpleWith("\n");
 
-            return TextBlockFactory.CreateTemplateWith("", user, postId, title, body, append);
+            return new SimpleDynamicCompositeBlockBuilder(DefaultRegex.DynamicVariableName, "\n")
+                .DynamicPut(CreateField("User", post.userId.ToString()))
+                .DynamicPut(CreateField("Post", post.id.ToString()))
+                .DynamicPut(title)
+                .DynamicPut(CreateField("Body", post.body))
+                .DynamicPut("")
+                .Build();
         }
 
         private static SimpleTextBlock CreateField(string labelName, string text)
