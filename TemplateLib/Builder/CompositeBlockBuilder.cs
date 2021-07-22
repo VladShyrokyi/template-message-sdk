@@ -9,12 +9,23 @@ namespace TemplateLib.Builder
     {
         private readonly IConditionChecker? _conditionChecker;
         private readonly Dictionary<string, string> _templateParts = new Dictionary<string, string>();
-        private readonly Dictionary<string, ITextBlock> _variables = new Dictionary<string, ITextBlock>();
+
+        protected readonly Dictionary<string, ITextBlock> Variables = new Dictionary<string, ITextBlock>();
 
         public CompositeBlockBuilder(IConditionChecker? conditionChecker = null)
         {
             _conditionChecker = conditionChecker;
         }
+
+        protected string Template => Variables.Keys.Aggregate("", (template, variableName) =>
+        {
+            if (_templateParts.TryGetValue(variableName, out string templatePart))
+            {
+                return template + templatePart;
+            }
+
+            return template;
+        });
 
         public CompositeBlockBuilder Add(string variableName, string templatePart)
         {
@@ -36,20 +47,14 @@ namespace TemplateLib.Builder
             if (IsNotContinueAdd(block))
                 return this;
 
-            _variables.Add(variableName, block);
+            Variables.Add(variableName, block);
             UpdateIfCan(block);
             return this;
         }
 
         public TemplateTextBlock Build()
         {
-            var template = "";
-            _variables.Keys.ToList().ForEach(variableName =>
-            {
-                if (_templateParts.TryGetValue(variableName, out string templatePart))
-                    template += templatePart;
-            });
-            return TextBlockFactory.CreateTemplateWith(template, _variables);
+            return TextBlockFactory.CreateTemplateWith(Template, Variables);
         }
 
         protected bool IsNotContinueAdd(ITextBlock checkedBlock)
