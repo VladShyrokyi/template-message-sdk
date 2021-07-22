@@ -5,7 +5,7 @@
         public const string Regex = "%\\[([^%,\\s]+)\\]%";
         public const string DynamicVariableName = "DYN_VAR";
 
-        public static string CreateSelector(string name)
+        public static string SelectorFrom(string name)
         {
             return $"%[{name}]%";
         }

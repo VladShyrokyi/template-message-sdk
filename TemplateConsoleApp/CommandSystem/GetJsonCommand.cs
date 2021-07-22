@@ -34,11 +34,11 @@ namespace TemplateConsoleApp.CommandSystem
             var charCountChecker = new CharCountChecker(MaxCharCount);
             var builder = new CompositeBlockBuilder(charCountChecker);
 
-            builder.Add(title, DefaultRegex.CreateSelector(title));
-            builder.Add(body, "\n" + DefaultRegex.CreateSelector(body));
+            builder.Add(title, DefaultRegex.SelectorFrom(title));
+            builder.Add(body, "\n" + DefaultRegex.SelectorFrom(body));
 
             var titleBlock =
-                TextBlockFactory.CreateSimpleEmptyWith($"Response from " + DefaultRegex.CreateSelector(title));
+                TextBlockFactory.CreateSimpleEmptyWith($"Response from " + DefaultRegex.SelectorFrom(title));
             titleBlock.PutVariable(title, Url);
             titleBlock.Editor = new BoldEditor();
             builder.Put(title, titleBlock);
@@ -113,7 +113,7 @@ namespace TemplateConsoleApp.CommandSystem
             const string textVariableName = "TEXT";
 
             var textBlock = TextBlockFactory.CreateSimpleEmptyWith(
-                $"{DefaultRegex.CreateSelector(labelVariableName)}: {DefaultRegex.CreateSelector(textVariableName)}"
+                $"{DefaultRegex.SelectorFrom(labelVariableName)}: {DefaultRegex.SelectorFrom(textVariableName)}"
             );
             textBlock.PutVariable(labelVariableName, labelName);
             textBlock.PutVariable(textVariableName, text);

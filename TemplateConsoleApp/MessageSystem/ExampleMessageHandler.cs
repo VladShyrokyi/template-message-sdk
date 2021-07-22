@@ -18,18 +18,18 @@ namespace TemplateConsoleApp.MessageSystem
             const string append = "APPEND";
 
             var headBlock = TextBlockFactory.CreateSimpleEmptyWith(
-                $"User: {DefaultRegex.CreateSelector(user)}{DefaultRegex.CreateSelector(append)}"
+                $"User: {DefaultRegex.SelectorFrom(user)}{DefaultRegex.SelectorFrom(append)}"
             );
             headBlock.PutVariable(user, update.Message.Chat.Username);
             headBlock.PutVariable(append, $" ({update.Message.Chat.LastName} {update.Message.Chat.FirstName})");
 
             var bodyBlock = TextBlockFactory.CreateSimpleEmptyWith(
-                $"Text: {DefaultRegex.CreateSelector(text)}{DefaultRegex.CreateSelector(append)}"
+                $"Text: {DefaultRegex.SelectorFrom(text)}{DefaultRegex.SelectorFrom(append)}"
             );
             bodyBlock.PutVariable(text, update.Message.Text);
 
             var bottomBlock = TextBlockFactory.CreateSimpleEmptyWith(
-                $"Time: {DefaultRegex.CreateSelector(time)}{DefaultRegex.CreateSelector(append)}"
+                $"Time: {DefaultRegex.SelectorFrom(time)}{DefaultRegex.SelectorFrom(append)}"
             );
             bottomBlock.PutVariable(time, update.Message.Date.ToString(CultureInfo.CurrentCulture));
 

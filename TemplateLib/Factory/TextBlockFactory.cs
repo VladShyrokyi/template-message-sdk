@@ -31,7 +31,7 @@ namespace TemplateLib.Factory
         public static SimpleTextBlock CreateSimpleWith(string variable)
         {
             var block = new SimpleTextBlock(new RegexTextWriter(
-                DefaultRegex.CreateSelector(DefaultRegex.DynamicVariableName),
+                DefaultRegex.SelectorFrom(DefaultRegex.DynamicVariableName),
                 DefaultRegex.Regex
             ), null);
             block.PutVariable(DefaultRegex.DynamicVariableName, variable);
