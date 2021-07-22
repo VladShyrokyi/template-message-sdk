@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using TemplateLib.Editor;
 using TemplateLib.Writer;
 
@@ -15,17 +16,14 @@ namespace TemplateLib.Block
             Editor = editor;
         }
 
-        public SimpleTextBlock(SimpleTextBlock block)
+        public SimpleTextBlock(SimpleTextBlock block) : this(block.Writer.Copy(), block.Editor?.Copy())
         {
-            Writer = block.Writer.Copy();
-            Editor = block.Editor?.Copy();
             foreach (var pair in block._variables)
-            {
                 PutVariable(pair.Key, pair.Value);
-            }
         }
 
         public ITextWriter Writer { get; set; }
+
         public ITextEditor? Editor { get; set; }
 
         public ITextBlock Copy()
@@ -52,25 +50,15 @@ namespace TemplateLib.Block
 
         public string GetVariable(string name)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+            if (name == null) throw new ArgumentNullException(nameof(name));
 
             return _variables[name];
         }
 
         public void PutVariable(string name, string variable)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-
-            if (variable == null)
-            {
-                throw new ArgumentNullException(nameof(variable));
-            }
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (variable == null) throw new ArgumentNullException(nameof(variable));
 
             _variables.Add(name, variable);
         }
