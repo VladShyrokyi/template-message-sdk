@@ -4,12 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+
 using Newtonsoft.Json;
+
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+
 using TemplateLib;
 using TemplateLib.Block;
 using TemplateLib.Builder;
+using TemplateLib.Checker;
 using TemplateLib.Editor;
 using TemplateLib.Factory;
 
@@ -22,9 +26,7 @@ namespace TemplateConsoleApp.CommandSystem
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly JsonSerializer _jsonSerializer = JsonSerializer.CreateDefault();
 
-        public GetJsonCommand(string name, CommandContext context) : base(name, context)
-        {
-        }
+        public GetJsonCommand(string name, CommandContext context) : base(name, context) { }
 
         public override Task<Message> Execute()
         {
@@ -82,15 +84,15 @@ namespace TemplateConsoleApp.CommandSystem
         {
             var charCountChecker = new CharCountChecker(limit);
             return result.Aggregate(
-                    new DynamicCompositeBlockBuilder("POST", "\n", charCountChecker),
-                    (blockBuilder, response) =>
-                    {
-                        var postBlock = PostHandler(response);
-                        blockBuilder.DynamicPut(postBlock);
-                        return blockBuilder;
-                    }
-                )
-                .Build();
+                             new DynamicCompositeBlockBuilder("POST", "\n", charCountChecker),
+                             (blockBuilder, response) =>
+                             {
+                                 var postBlock = PostHandler(response);
+                                 blockBuilder.DynamicPut(postBlock);
+                                 return blockBuilder;
+                             }
+                         )
+                         .Build();
         }
 
         private static ITextBlock PostHandler(JsonPostResponse post)
@@ -99,12 +101,12 @@ namespace TemplateConsoleApp.CommandSystem
             title.Editor = new BoldEditor();
 
             return new SimpleDynamicCompositeBlockBuilder(DefaultRegex.DynamicVariableName, "\n")
-                .DynamicPut(CreateField("User", post.userId.ToString()))
-                .DynamicPut(CreateField("Post", post.id.ToString()))
-                .DynamicPut(title)
-                .DynamicPut(CreateField("Body", post.body))
-                .DynamicPut("")
-                .Build();
+                   .DynamicPut(CreateField("User", post.userId.ToString()))
+                   .DynamicPut(CreateField("Post", post.id.ToString()))
+                   .DynamicPut(title)
+                   .DynamicPut(CreateField("Body", post.body))
+                   .DynamicPut("")
+                   .Build();
         }
 
         private static SimpleTextBlock CreateField(string labelName, string text)

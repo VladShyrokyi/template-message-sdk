@@ -45,8 +45,9 @@
         <Compile Include="Block\TemplateTextBlock.cs"/>
         <Compile Include="Builder\CompositeBlockBuilder.cs"/>
         <Compile Include="Builder\DynamicCompositeBlockBuilder.cs"/>
-        <Compile Include="Builder\IConditionChecker.cs"/>
         <Compile Include="Builder\SimpleDynamicCompositeBlockBuilder.cs"/>
+        <Compile Include="Checker\CharCountChecker.cs"/>
+        <Compile Include="Checker\IConditionChecker.cs"/>
         <Compile Include="DefaultRegex.cs"/>
         <Compile Include="Editor\ITextEditor.cs"/>
         <Compile Include="Factory\TextBlockFactory.cs"/>

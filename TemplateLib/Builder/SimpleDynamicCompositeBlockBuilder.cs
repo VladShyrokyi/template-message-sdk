@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+
 using TemplateLib.Block;
+using TemplateLib.Checker;
 using TemplateLib.Factory;
 
 namespace TemplateLib.Builder
@@ -8,9 +10,11 @@ namespace TemplateLib.Builder
     public class SimpleDynamicCompositeBlockBuilder : DynamicCompositeBlockBuilder
     {
         public SimpleDynamicCompositeBlockBuilder(string dynamicVariableName, string separator,
-            IConditionChecker? conditionChecker = null) : base(dynamicVariableName, separator, conditionChecker)
-        {
-        }
+                                                  IConditionChecker? conditionChecker = null) : base(
+            dynamicVariableName, separator, conditionChecker) { }
+
+        public SimpleDynamicCompositeBlockBuilder(string separator, IConditionChecker? conditionChecker = null) :
+            this(DefaultRegex.DynamicVariableName, separator, conditionChecker) { }
 
         public new SimpleDynamicCompositeBlockBuilder Add(string name, string templatePart)
         {
@@ -49,9 +53,10 @@ namespace TemplateLib.Builder
 
         public new SimpleTextBlock Build()
         {
-            return TextBlockFactory.CreateSimpleWith(Template, Variables.ToDictionary(
-                pair => pair.Key, pair => pair.Value.Write()
-            ));
+            return TextBlockFactory.CreateSimpleWith(
+                Template,
+                Variables.ToDictionary(pair => pair.Key, pair => pair.Value.Write())
+            );
         }
     }
 }

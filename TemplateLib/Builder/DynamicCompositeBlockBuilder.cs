@@ -1,4 +1,5 @@
 ﻿using TemplateLib.Block;
+using TemplateLib.Checker;
 using TemplateLib.Factory;
 
 namespace TemplateLib.Builder
@@ -10,12 +11,15 @@ namespace TemplateLib.Builder
         private int _dynamicVariableCounter;
 
         public DynamicCompositeBlockBuilder(string dynamicVariableName, string separator,
-            IConditionChecker? conditionChecker = null) : base(conditionChecker)
+                                            IConditionChecker? conditionChecker = null) : base(conditionChecker)
         {
             _dynamicVariableName = dynamicVariableName;
             _dynamicVariableCounter = 0;
             _separator = separator;
         }
+
+        public DynamicCompositeBlockBuilder(string separator, IConditionChecker? conditionChecker = null) : this(
+            DefaultRegex.DynamicVariableName, separator, conditionChecker) { }
 
         public new DynamicCompositeBlockBuilder Add(string name, string templatePart)
         {

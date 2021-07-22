@@ -1,13 +1,12 @@
 ﻿using TemplateLib.Block;
-using TemplateLib.Builder;
 
-namespace TemplateConsoleApp.CommandSystem
+namespace TemplateLib.Checker
 {
     public class CharCountChecker : IConditionChecker
     {
-        public CharCountChecker(int maxCharCount)
+        public CharCountChecker(int limit)
         {
-            Limit = maxCharCount;
+            Limit = limit;
         }
 
         public int Limit { get; private set; } = 0;

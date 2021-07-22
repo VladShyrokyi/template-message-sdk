@@ -62,7 +62,6 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="CommandSystem\CharCountChecker.cs" />
         <Compile Include="CommandSystem\CommandContext.cs" />
         <Compile Include="CommandSystem\ExampleCommandHandler.cs" />
         <Compile Include="CommandSystem\GetJsonCommand.cs" />

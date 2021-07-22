@@ -1,6 +1,6 @@
 ﻿using TemplateLib.Block;
 
-namespace TemplateLib.Builder
+namespace TemplateLib.Checker
 {
     public interface IConditionChecker
     {

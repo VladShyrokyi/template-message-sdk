@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+
 using TemplateLib.Block;
+using TemplateLib.Checker;
 using TemplateLib.Factory;
 
 namespace TemplateLib.Builder
