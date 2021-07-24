@@ -22,9 +22,7 @@ namespace TemplateLib.Factory
         {
             var block = new SimpleTextBlock(new RegexTextWriter(template, DefaultRegex.Regex), null);
             foreach (var pair in variables)
-            {
                 block.PutVariable(pair.Key, pair.Value);
-            }
 
             return block;
         }
@@ -54,9 +52,7 @@ namespace TemplateLib.Factory
         {
             var builder = new DynamicCompositeBlockBuilder(separator);
             foreach (var block in variables)
-            {
                 builder.DynamicPut(block);
-            }
 
             return builder.Build();
         }
