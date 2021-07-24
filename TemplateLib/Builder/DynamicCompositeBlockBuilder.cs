@@ -34,8 +34,8 @@ namespace TemplateLib.Builder
         {
             var variableName = _dynamicVariableName + "_" + _dynamicVariableCounter;
             var templatePart = _dynamicVariableCounter == 0
-                ? $"%[{variableName}]%"
-                : $"{_separator}%[{variableName}]%";
+                ? DefaultRegex.SelectorFrom(variableName)
+                : _separator + DefaultRegex.SelectorFrom(variableName);
 
             var checkedBlock = TextBlockFactory.CreateTemplateEmptyWith(templatePart);
             checkedBlock.PutVariable(variableName, block);
