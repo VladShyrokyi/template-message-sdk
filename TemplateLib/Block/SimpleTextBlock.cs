@@ -39,18 +39,18 @@ namespace TemplateLib.Block
         public string Write()
         {
             return Editor != null
-                ? Editor.ToEditing(Writer.ToWriting(new Dictionary<string, string>(_variables), ""))
-                : Writer.ToWriting(new Dictionary<string, string>(_variables), "");
+                ? Editor.ToEditing(Writer.ToWriting(new Dictionary<string, string>(_variables)))
+                : Writer.ToWriting(new Dictionary<string, string>(_variables));
         }
 
         public string WriteWithEditor(ITextEditor editor)
         {
-            return editor.ToEditing(Writer.ToWriting(new Dictionary<string, string>(_variables), ""));
+            return editor.ToEditing(Writer.ToWriting(new Dictionary<string, string>(_variables)));
         }
 
         public string WriteWithoutEditor()
         {
-            return Writer.ToWriting(new Dictionary<string, string>(_variables), "");
+            return Writer.ToWriting(new Dictionary<string, string>(_variables));
         }
 
         public string GetVariable(string name)

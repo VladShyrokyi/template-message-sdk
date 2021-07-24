@@ -37,9 +37,9 @@ namespace TemplateLib.Builder
             return (DynamicCompositeBlockBuilder) base.Put(name, variable);
         }
 
-        public DynamicCompositeBlockBuilder DynamicPut(ITextBlock block)
+        public DynamicCompositeBlockBuilder DynamicPut(ITextBlock variable)
         {
-            if (block == null) throw new VariableNullException(this);
+            if (variable == null) throw new VariableNullException(this);
 
             var variableName = _dynamicVariableName + "_" + _dynamicVariableCounter;
             var templatePart = _dynamicVariableCounter == 0
@@ -47,11 +47,11 @@ namespace TemplateLib.Builder
                 : _separator + DefaultRegex.SelectorFrom(variableName);
 
             var checkedBlock = TextBlockFactory.CreateTemplateEmptyWith(templatePart);
-            checkedBlock.PutVariable(variableName, block);
+            checkedBlock.PutVariable(variableName, variable);
             if (IsNotContinueAdd(checkedBlock))
                 return this;
 
-            Add(variableName, templatePart).Put(variableName, block);
+            Add(variableName, templatePart).Put(variableName, variable);
             _dynamicVariableCounter++;
 
             return this;

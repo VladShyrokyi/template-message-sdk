@@ -27,31 +27,31 @@ namespace TemplateLib.Builder
                 : template
         );
 
-        public CompositeBlockBuilder Add(string variableName, string templatePart)
+        public CompositeBlockBuilder Add(string name, string templatePart)
         {
-            if (variableName == null) throw new VariableNameNullException(this);
+            if (name == null) throw new VariableNameNullException(this);
             if (templatePart == null) throw new TemplateNullException(this);
 
             var checkedBlock = TextBlockFactory.CreateSimpleEmptyWith(templatePart);
             if (IsNotContinueAdd(checkedBlock))
                 return this;
 
-            _templateParts.Add(variableName, templatePart);
+            _templateParts.Add(name, templatePart);
             UpdateIfCan(checkedBlock);
 
             return this;
         }
 
-        public CompositeBlockBuilder Put(string variableName, ITextBlock block)
+        public CompositeBlockBuilder Put(string name, ITextBlock variable)
         {
-            if (variableName == null) throw new VariableNameNullException(this);
-            if (block == null) throw new VariableNullException(this);
+            if (name == null) throw new VariableNameNullException(this);
+            if (variable == null) throw new VariableNullException(this);
 
-            if (IsNotContinueAdd(block))
+            if (IsNotContinueAdd(variable))
                 return this;
 
-            Variables.Add(variableName, block);
-            UpdateIfCan(block);
+            Variables.Add(name, variable);
+            UpdateIfCan(variable);
             return this;
         }
 

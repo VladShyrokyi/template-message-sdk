@@ -22,12 +22,12 @@ namespace TemplateLib.Builder
             return (SimpleDynamicCompositeBlockBuilder) base.Add(name, templatePart);
         }
 
-        public new SimpleDynamicCompositeBlockBuilder Put(string name, ITextBlock block)
+        public new SimpleDynamicCompositeBlockBuilder Put(string name, ITextBlock variable)
         {
             if (name == null) throw new VariableNameNullException(this);
-            if (block == null) throw new VariableNullException(this);
+            if (variable == null) throw new VariableNullException(this);
 
-            return (SimpleDynamicCompositeBlockBuilder) base.Put(name, block);
+            return (SimpleDynamicCompositeBlockBuilder) base.Put(name, variable);
         }
 
         public SimpleDynamicCompositeBlockBuilder Put(string name, string variable)

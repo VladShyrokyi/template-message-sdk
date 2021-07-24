@@ -42,8 +42,8 @@ namespace TemplateLib.Block
                 .ToDictionary(pair => pair.Key, pair => pair.Value.Write());
 
             return Editor != null
-                ? Editor.ToEditing(Writer.ToWriting(variables, ""))
-                : Writer.ToWriting(variables, "");
+                ? Editor.ToEditing(Writer.ToWriting(variables))
+                : Writer.ToWriting(variables);
         }
 
         public string WriteWithEditor(ITextEditor editor)
@@ -51,7 +51,7 @@ namespace TemplateLib.Block
             var variables = _variables
                 .ToDictionary(pair => pair.Key, pair => pair.Value.WriteWithEditor(editor));
 
-            return editor.ToEditing(Writer.ToWriting(variables, ""));
+            return editor.ToEditing(Writer.ToWriting(variables));
         }
 
         public string WriteWithoutEditor()
@@ -59,7 +59,7 @@ namespace TemplateLib.Block
             var variables = _variables
                 .ToDictionary(pair => pair.Key, pair => pair.Value.WriteWithoutEditor());
 
-            return Writer.ToWriting(variables, "");
+            return Writer.ToWriting(variables);
         }
 
         public ITextBlock GetVariable(string name)
