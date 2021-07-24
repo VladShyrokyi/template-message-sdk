@@ -8,14 +8,14 @@ namespace TemplateLib.Factory
 {
     public static class TextBlockFactory
     {
-        public static SimpleTextBlock CreateSimpleEmptyWith(string templatePart)
+        public static SimpleTextBlock CreateSimpleEmptyWith(string template)
         {
-            return new SimpleTextBlock(new RegexTextWriter(templatePart, DefaultRegex.Regex), null);
+            return new SimpleTextBlock(new RegexTextWriter(template, DefaultRegex.Regex), null);
         }
 
-        public static TemplateTextBlock CreateTemplateEmptyWith(string templatePart)
+        public static TemplateTextBlock CreateTemplateEmptyWith(string template)
         {
-            return new TemplateTextBlock(new RegexTextWriter(templatePart, DefaultRegex.Regex), null);
+            return new TemplateTextBlock(new RegexTextWriter(template, DefaultRegex.Regex), null);
         }
 
         public static SimpleTextBlock CreateSimpleWith(string template, Dictionary<string, string> variables)
