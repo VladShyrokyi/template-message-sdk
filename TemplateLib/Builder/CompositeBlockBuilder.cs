@@ -19,15 +19,12 @@ namespace TemplateLib.Builder
             _conditionChecker = conditionChecker;
         }
 
-        protected string Template => Variables.Keys.Aggregate("", (template, variableName) =>
-        {
-            if (_templateParts.TryGetValue(variableName, out string templatePart))
-            {
-                return template + templatePart;
-            }
-
-            return template;
-        });
+        protected string Template => Variables.Keys.Aggregate(
+            "",
+            (template, variableName) => _templateParts.TryGetValue(variableName, out string templatePart)
+                ? template + templatePart
+                : template
+        );
 
         public CompositeBlockBuilder Add(string variableName, string templatePart)
         {
