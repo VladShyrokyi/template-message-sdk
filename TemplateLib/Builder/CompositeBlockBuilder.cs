@@ -3,6 +3,7 @@ using System.Linq;
 
 using TemplateLib.Block;
 using TemplateLib.Checker;
+using TemplateLib.Exception;
 using TemplateLib.Factory;
 
 namespace TemplateLib.Builder
@@ -19,38 +20,38 @@ namespace TemplateLib.Builder
             _conditionChecker = conditionChecker;
         }
 
-        protected string Template => Variables.Keys.Aggregate("", (template, variableName) =>
-        {
-            if (_templateParts.TryGetValue(variableName, out string templatePart))
-            {
-                return template + templatePart;
-            }
+        protected string Template => Variables.Keys.Aggregate(
+            "",
+            (template, variableName) => _templateParts.TryGetValue(variableName, out string templatePart)
+                ? template + templatePart
+                : template
+        );
 
-            return template;
-        });
-
-        public CompositeBlockBuilder Add(string variableName, string templatePart)
+        public CompositeBlockBuilder Add(string name, string templatePart)
         {
+            if (name == null) throw new VariableNameNullException(this);
+            if (templatePart == null) throw new TemplateNullException(this);
+
             var checkedBlock = TextBlockFactory.CreateSimpleEmptyWith(templatePart);
             if (IsNotContinueAdd(checkedBlock))
                 return this;
 
-            _templateParts.Add(variableName, templatePart);
+            _templateParts.Add(name, templatePart);
             UpdateIfCan(checkedBlock);
 
             return this;
         }
 
-        public CompositeBlockBuilder Put(string variableName, ITextBlock? block)
+        public CompositeBlockBuilder Put(string name, ITextBlock variable)
         {
-            if (block == null)
+            if (name == null) throw new VariableNameNullException(this);
+            if (variable == null) throw new VariableNullException(this);
+
+            if (IsNotContinueAdd(variable))
                 return this;
 
-            if (IsNotContinueAdd(block))
-                return this;
-
-            Variables.Add(variableName, block);
-            UpdateIfCan(block);
+            Variables.Add(name, variable);
+            UpdateIfCan(variable);
             return this;
         }
 

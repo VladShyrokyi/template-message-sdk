@@ -6,6 +6,6 @@ namespace TemplateLib.Writer
     {
         string Template { get; set; }
         ITextWriter Copy();
-        string ToWriting(Dictionary<string, string> variables, string defaultValue);
+        string ToWriting(Dictionary<string, string> variables, string defaultValue = "");
     }
 }

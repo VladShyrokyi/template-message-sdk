@@ -4,3 +4,7 @@ TemplateLib/lib
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
+.idea/
+*.user
+*.nupkg
+*.nuspec

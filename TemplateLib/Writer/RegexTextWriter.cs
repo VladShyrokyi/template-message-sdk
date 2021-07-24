@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
+
+using TemplateLib.Exception;
 
 namespace TemplateLib.Writer
 {
@@ -14,19 +16,21 @@ namespace TemplateLib.Writer
 
         public RegexTextWriter(string template, string regex)
         {
-            _regex = regex;
+            _regex = regex ?? throw new RegexNullException(this);
             _selectorsPattern = new Regex(_regex);
-            Template = template;
+            Template = template ?? throw new TemplateNullException(this);
         }
 
         public RegexTextWriter(RegexTextWriter writer)
         {
+            if (writer == null) throw new ArgumentNullException(nameof(writer));
+
             _regex = writer._regex;
             _selectorsPattern = new Regex(_regex);
             Template = writer._template;
         }
 
-        public ISet<string> Selectors => _selectors.Keys.ToHashSet();
+        public ISet<string> Selectors => new HashSet<string>(_selectors.Keys);
 
         public string Template
         {
@@ -56,8 +60,10 @@ namespace TemplateLib.Writer
             return new RegexTextWriter(this);
         }
 
-        public string ToWriting(Dictionary<string, string> variables, string defaultValue)
+        public string ToWriting(Dictionary<string, string> variables, string defaultValue = "")
         {
+            if (variables == null) throw new VariableNullException(this);
+
             var result = Template;
             var selectorsName = Selectors;
             foreach (var variable in variables)
@@ -66,9 +72,7 @@ namespace TemplateLib.Writer
                 string variableValue = variable.Value;
 
                 if (!selectorsName.Contains(variableName))
-                {
                     continue;
-                }
 
                 string selector = _selectors[variableName];
                 result = result.Replace(selector, variableValue);
@@ -76,9 +80,7 @@ namespace TemplateLib.Writer
             }
 
             if (!_selectorsPattern.Match(result).Success)
-            {
                 return result;
-            }
 
             foreach (var selectorName in selectorsName)
             {

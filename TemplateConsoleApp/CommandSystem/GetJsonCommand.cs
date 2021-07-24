@@ -84,15 +84,15 @@ namespace TemplateConsoleApp.CommandSystem
         {
             var charCountChecker = new CharCountChecker(limit);
             return result.Aggregate(
-                             new DynamicCompositeBlockBuilder("POST", "\n", charCountChecker),
-                             (blockBuilder, response) =>
-                             {
-                                 var postBlock = PostHandler(response);
-                                 blockBuilder.DynamicPut(postBlock);
-                                 return blockBuilder;
-                             }
-                         )
-                         .Build();
+                    new DynamicCompositeBlockBuilder("\n", "POST", charCountChecker),
+                    (blockBuilder, response) =>
+                    {
+                        var postBlock = PostHandler(response);
+                        blockBuilder.DynamicPut(postBlock);
+                        return blockBuilder;
+                    }
+                )
+                .Build();
         }
 
         private static ITextBlock PostHandler(JsonPostResponse post)
@@ -100,13 +100,13 @@ namespace TemplateConsoleApp.CommandSystem
             var title = CreateField("Title", post.title);
             title.Editor = new BoldEditor();
 
-            return new SimpleDynamicCompositeBlockBuilder(DefaultRegex.DynamicVariableName, "\n")
-                   .DynamicPut(CreateField("User", post.userId.ToString()))
-                   .DynamicPut(CreateField("Post", post.id.ToString()))
-                   .DynamicPut(title)
-                   .DynamicPut(CreateField("Body", post.body))
-                   .DynamicPut("")
-                   .Build();
+            return new SimpleDynamicCompositeBlockBuilder("\n")
+                .DynamicPut(CreateField("User", post.userId.ToString()))
+                .DynamicPut(CreateField("Post", post.id.ToString()))
+                .DynamicPut(title)
+                .DynamicPut(CreateField("Body", post.body))
+                .DynamicPut("")
+                .Build();
         }
 
         private static SimpleTextBlock CreateField(string labelName, string text)
