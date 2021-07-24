@@ -25,13 +25,15 @@ namespace TemplateLib.Builder
             return (DynamicCompositeBlockBuilder) base.Add(name, templatePart);
         }
 
-        public new DynamicCompositeBlockBuilder Put(string name, ITextBlock variable)
+        public new DynamicCompositeBlockBuilder Put(string name, ITextBlock? variable)
         {
             return (DynamicCompositeBlockBuilder) base.Put(name, variable);
         }
 
-        public DynamicCompositeBlockBuilder DynamicPut(ITextBlock block)
+        public DynamicCompositeBlockBuilder DynamicPut(ITextBlock? block)
         {
+            if (block == null) return this;
+
             var variableName = _dynamicVariableName + "_" + _dynamicVariableCounter;
             var templatePart = _dynamicVariableCounter == 0
                 ? DefaultRegex.SelectorFrom(variableName)

@@ -19,14 +19,14 @@ namespace TemplateLib.Builder
             return (SimpleDynamicCompositeBlockBuilder) base.Add(name, templatePart);
         }
 
-        public new SimpleDynamicCompositeBlockBuilder Put(string name, ITextBlock block)
+        public new SimpleDynamicCompositeBlockBuilder Put(string name, ITextBlock? block)
         {
             return (SimpleDynamicCompositeBlockBuilder) base.Put(name, block);
         }
 
-        public SimpleDynamicCompositeBlockBuilder Put(string name, string variable)
+        public SimpleDynamicCompositeBlockBuilder Put(string name, string? variable)
         {
-            if (variable == null) throw new ArgumentNullException(nameof(variable));
+            if (variable == null) return this;
 
             return (SimpleDynamicCompositeBlockBuilder) base.Put(name, TextBlockFactory.CreateSimpleWith(variable));
         }
