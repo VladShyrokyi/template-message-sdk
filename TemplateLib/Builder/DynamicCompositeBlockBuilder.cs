@@ -1,4 +1,6 @@
-﻿using TemplateLib.Block;
+﻿using System;
+
+using TemplateLib.Block;
 using TemplateLib.Checker;
 using TemplateLib.Exception;
 using TemplateLib.Factory;
@@ -16,9 +18,9 @@ namespace TemplateLib.Builder
                                             string dynamicVariableName = DefaultRegex.DynamicVariableName,
                                             IConditionChecker? conditionChecker = null) : base(conditionChecker)
         {
+            _separator = separator ?? throw new ArgumentNullException(nameof(separator));
             _dynamicVariableName = dynamicVariableName;
             _dynamicVariableCounter = 0;
-            _separator = separator;
         }
 
         public new DynamicCompositeBlockBuilder Add(string name, string templatePart)
