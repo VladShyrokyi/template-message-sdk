@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+
 using TemplateLib.Block;
 using TemplateLib.Builder;
 using TemplateLib.Writer;
@@ -31,9 +32,9 @@ namespace TemplateLib.Factory
         public static SimpleTextBlock CreateSimpleWith(string variable)
         {
             var block = new SimpleTextBlock(new RegexTextWriter(
-                DefaultRegex.SelectorFrom(DefaultRegex.DynamicVariableName),
-                DefaultRegex.Regex
-            ), null);
+                                                DefaultRegex.SelectorFrom(DefaultRegex.DynamicVariableName),
+                                                DefaultRegex.Regex
+                                            ), null);
             block.PutVariable(DefaultRegex.DynamicVariableName, variable);
             return block;
         }
@@ -51,7 +52,7 @@ namespace TemplateLib.Factory
 
         public static TemplateTextBlock CreateTemplateWith(string separator, params ITextBlock[] variables)
         {
-            var builder = new DynamicCompositeBlockBuilder(DefaultRegex.DynamicVariableName, separator);
+            var builder = new DynamicCompositeBlockBuilder(separator);
             foreach (var block in variables)
             {
                 builder.DynamicPut(block);

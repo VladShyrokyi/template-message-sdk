@@ -8,18 +8,17 @@ namespace TemplateLib.Builder
     {
         private readonly string _dynamicVariableName;
         private readonly string _separator;
+
         private int _dynamicVariableCounter;
 
-        public DynamicCompositeBlockBuilder(string dynamicVariableName, string separator,
+        public DynamicCompositeBlockBuilder(string separator,
+                                            string dynamicVariableName = DefaultRegex.DynamicVariableName,
                                             IConditionChecker? conditionChecker = null) : base(conditionChecker)
         {
             _dynamicVariableName = dynamicVariableName;
             _dynamicVariableCounter = 0;
             _separator = separator;
         }
-
-        public DynamicCompositeBlockBuilder(string separator, IConditionChecker? conditionChecker = null) : this(
-            DefaultRegex.DynamicVariableName, separator, conditionChecker) { }
 
         public new DynamicCompositeBlockBuilder Add(string name, string templatePart)
         {

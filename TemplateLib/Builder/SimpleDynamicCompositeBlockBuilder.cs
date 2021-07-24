@@ -9,12 +9,10 @@ namespace TemplateLib.Builder
 {
     public class SimpleDynamicCompositeBlockBuilder : DynamicCompositeBlockBuilder
     {
-        public SimpleDynamicCompositeBlockBuilder(string dynamicVariableName, string separator,
+        public SimpleDynamicCompositeBlockBuilder(string separator,
+                                                  string dynamicVariableName = DefaultRegex.DynamicVariableName,
                                                   IConditionChecker? conditionChecker = null) : base(
-            dynamicVariableName, separator, conditionChecker) { }
-
-        public SimpleDynamicCompositeBlockBuilder(string separator, IConditionChecker? conditionChecker = null) :
-            this(DefaultRegex.DynamicVariableName, separator, conditionChecker) { }
+            separator, dynamicVariableName, conditionChecker) { }
 
         public new SimpleDynamicCompositeBlockBuilder Add(string name, string templatePart)
         {
@@ -28,10 +26,7 @@ namespace TemplateLib.Builder
 
         public SimpleDynamicCompositeBlockBuilder Put(string name, string variable)
         {
-            if (variable == null)
-            {
-                throw new ArgumentNullException(nameof(variable));
-            }
+            if (variable == null) throw new ArgumentNullException(nameof(variable));
 
             return (SimpleDynamicCompositeBlockBuilder) base.Put(name, TextBlockFactory.CreateSimpleWith(variable));
         }
@@ -43,10 +38,7 @@ namespace TemplateLib.Builder
 
         public SimpleDynamicCompositeBlockBuilder DynamicPut(string variable)
         {
-            if (variable == null)
-            {
-                throw new ArgumentNullException(nameof(variable));
-            }
+            if (variable == null) throw new ArgumentNullException(nameof(variable));
 
             return (SimpleDynamicCompositeBlockBuilder) base.DynamicPut(TextBlockFactory.CreateSimpleWith(variable));
         }
