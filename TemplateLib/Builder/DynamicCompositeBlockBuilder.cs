@@ -1,5 +1,6 @@
 ﻿using TemplateLib.Block;
 using TemplateLib.Checker;
+using TemplateLib.Exception;
 using TemplateLib.Factory;
 
 namespace TemplateLib.Builder
@@ -22,17 +23,23 @@ namespace TemplateLib.Builder
 
         public new DynamicCompositeBlockBuilder Add(string name, string templatePart)
         {
+            if (name == null) throw new VariableNameNullException(this);
+            if (templatePart == null) throw new TemplateNullException(this);
+
             return (DynamicCompositeBlockBuilder) base.Add(name, templatePart);
         }
 
-        public new DynamicCompositeBlockBuilder Put(string name, ITextBlock? variable)
+        public new DynamicCompositeBlockBuilder Put(string name, ITextBlock variable)
         {
+            if (name == null) throw new VariableNameNullException(this);
+            if (variable == null) throw new VariableNullException(this);
+
             return (DynamicCompositeBlockBuilder) base.Put(name, variable);
         }
 
-        public DynamicCompositeBlockBuilder DynamicPut(ITextBlock? block)
+        public DynamicCompositeBlockBuilder DynamicPut(ITextBlock block)
         {
-            if (block == null) return this;
+            if (block == null) throw new VariableNullException(this);
 
             var variableName = _dynamicVariableName + "_" + _dynamicVariableCounter;
             var templatePart = _dynamicVariableCounter == 0

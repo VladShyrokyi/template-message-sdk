@@ -3,6 +3,7 @@ using System.Linq;
 
 using TemplateLib.Block;
 using TemplateLib.Checker;
+using TemplateLib.Exception;
 using TemplateLib.Factory;
 
 namespace TemplateLib.Builder
@@ -28,6 +29,9 @@ namespace TemplateLib.Builder
 
         public CompositeBlockBuilder Add(string variableName, string templatePart)
         {
+            if (variableName == null) throw new VariableNameNullException(this);
+            if (templatePart == null) throw new TemplateNullException(this);
+
             var checkedBlock = TextBlockFactory.CreateSimpleEmptyWith(templatePart);
             if (IsNotContinueAdd(checkedBlock))
                 return this;
@@ -38,10 +42,10 @@ namespace TemplateLib.Builder
             return this;
         }
 
-        public CompositeBlockBuilder Put(string variableName, ITextBlock? block)
+        public CompositeBlockBuilder Put(string variableName, ITextBlock block)
         {
-            if (block == null)
-                return this;
+            if (variableName == null) throw new VariableNameNullException(this);
+            if (block == null) throw new VariableNullException(this);
 
             if (IsNotContinueAdd(block))
                 return this;

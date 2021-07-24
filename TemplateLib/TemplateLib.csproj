@@ -50,6 +50,10 @@
         <Compile Include="Checker\IConditionChecker.cs"/>
         <Compile Include="DefaultRegex.cs"/>
         <Compile Include="Editor\ITextEditor.cs"/>
+        <Compile Include="Exception\RegexNullException.cs"/>
+        <Compile Include="Exception\TemplateNullException.cs"/>
+        <Compile Include="Exception\VariableNameNullException.cs"/>
+        <Compile Include="Exception\VariableNullException.cs"/>
         <Compile Include="Factory\TextBlockFactory.cs"/>
         <Compile Include="Properties\AssemblyInfo.cs"/>
         <Compile Include="Writer\ITextWriter.cs"/>
