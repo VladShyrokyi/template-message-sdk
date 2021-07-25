@@ -8,7 +8,7 @@ using TemplateLib.Writer;
 
 namespace TemplateLib.Block
 {
-    public class TemplateTextBlock : ITextBlock
+    public class TemplateTextBlock : ITextBlockWithVariables
     {
         private readonly Dictionary<string, ITextBlock> _variables = new Dictionary<string, ITextBlock>();
 
