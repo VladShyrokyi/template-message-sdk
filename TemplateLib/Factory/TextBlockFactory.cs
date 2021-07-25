@@ -65,7 +65,7 @@ namespace TemplateLib.Factory
             if (separator == null) throw new ArgumentNullException(nameof(separator));
             if (variables == null) throw new TemplateNullException(typeof(TextBlockFactory));
 
-            var builder = new DynamicCompositeBlockBuilder(separator);
+            var builder = new TemplateBlockConditionDynamicBuilder(separator);
             foreach (var block in variables)
                 builder.DynamicPut(block);
 

@@ -34,7 +34,7 @@ namespace TemplateConsoleApp.CommandSystem
             const string body = "BODY";
 
             var charCountChecker = new CharCountChecker(MaxCharCount);
-            var builder = new CompositeBlockBuilder(charCountChecker);
+            var builder = new TemplateBlockConditionBuilder(charCountChecker);
 
             builder.Add(title, DefaultRegex.SelectorFrom(title));
             builder.Add(body, "\n" + DefaultRegex.SelectorFrom(body));
@@ -84,7 +84,7 @@ namespace TemplateConsoleApp.CommandSystem
         {
             var charCountChecker = new CharCountChecker(limit);
             return result.Aggregate(
-                    new DynamicCompositeBlockBuilder("\n", "POST", charCountChecker),
+                    new TemplateBlockConditionDynamicBuilder("\n", "POST", charCountChecker),
                     (blockBuilder, response) =>
                     {
                         var postBlock = PostHandler(response);
@@ -100,7 +100,7 @@ namespace TemplateConsoleApp.CommandSystem
             var title = CreateField("Title", post.title);
             title.Editor = new BoldEditor();
 
-            return new SimpleDynamicCompositeBlockBuilder("\n")
+            return new SimpleTemplateBlockConditionDynamicBuilder("\n")
                 .DynamicPut(CreateField("User", post.userId.ToString()))
                 .DynamicPut(CreateField("Post", post.id.ToString()))
                 .DynamicPut(title)

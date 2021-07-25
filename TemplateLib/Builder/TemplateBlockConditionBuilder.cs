@@ -8,14 +8,14 @@ using TemplateLib.Factory;
 
 namespace TemplateLib.Builder
 {
-    public class CompositeBlockBuilder
+    public class TemplateBlockConditionBuilder
     {
         private readonly IConditionChecker? _conditionChecker;
         private readonly Dictionary<string, string> _templateParts = new Dictionary<string, string>();
 
         protected readonly Dictionary<string, ITextBlock> Variables = new Dictionary<string, ITextBlock>();
 
-        public CompositeBlockBuilder(IConditionChecker? conditionChecker = null)
+        public TemplateBlockConditionBuilder(IConditionChecker? conditionChecker = null)
         {
             _conditionChecker = conditionChecker;
         }
@@ -27,7 +27,7 @@ namespace TemplateLib.Builder
                 : template
         );
 
-        public CompositeBlockBuilder Add(string name, string templatePart)
+        public TemplateBlockConditionBuilder Add(string name, string templatePart)
         {
             if (name == null) throw new VariableNameNullException(this);
             if (templatePart == null) throw new TemplateNullException(this);
@@ -42,7 +42,7 @@ namespace TemplateLib.Builder
             return this;
         }
 
-        public CompositeBlockBuilder Put(string name, ITextBlock variable)
+        public TemplateBlockConditionBuilder Put(string name, ITextBlock variable)
         {
             if (name == null) throw new VariableNameNullException(this);
             if (variable == null) throw new VariableNullException(this);

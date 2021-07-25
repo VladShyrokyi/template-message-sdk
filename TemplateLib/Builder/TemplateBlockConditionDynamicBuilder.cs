@@ -7,14 +7,14 @@ using TemplateLib.Factory;
 
 namespace TemplateLib.Builder
 {
-    public class DynamicCompositeBlockBuilder : CompositeBlockBuilder
+    public class TemplateBlockConditionDynamicBuilder : TemplateBlockConditionBuilder
     {
         private readonly string _dynamicVariableName;
         private readonly string _separator;
 
         private int _dynamicVariableCounter;
 
-        public DynamicCompositeBlockBuilder(string separator,
+        public TemplateBlockConditionDynamicBuilder(string separator,
                                             string dynamicVariableName = DefaultRegex.DynamicVariableName,
                                             IConditionChecker? conditionChecker = null) : base(conditionChecker)
         {
@@ -23,23 +23,23 @@ namespace TemplateLib.Builder
             _dynamicVariableCounter = 0;
         }
 
-        public new DynamicCompositeBlockBuilder Add(string name, string templatePart)
+        public new TemplateBlockConditionDynamicBuilder Add(string name, string templatePart)
         {
             if (name == null) throw new VariableNameNullException(this);
             if (templatePart == null) throw new TemplateNullException(this);
 
-            return (DynamicCompositeBlockBuilder) base.Add(name, templatePart);
+            return (TemplateBlockConditionDynamicBuilder) base.Add(name, templatePart);
         }
 
-        public new DynamicCompositeBlockBuilder Put(string name, ITextBlock variable)
+        public new TemplateBlockConditionDynamicBuilder Put(string name, ITextBlock variable)
         {
             if (name == null) throw new VariableNameNullException(this);
             if (variable == null) throw new VariableNullException(this);
 
-            return (DynamicCompositeBlockBuilder) base.Put(name, variable);
+            return (TemplateBlockConditionDynamicBuilder) base.Put(name, variable);
         }
 
-        public DynamicCompositeBlockBuilder DynamicPut(ITextBlock variable)
+        public TemplateBlockConditionDynamicBuilder DynamicPut(ITextBlock variable)
         {
             if (variable == null) throw new VariableNullException(this);
 
