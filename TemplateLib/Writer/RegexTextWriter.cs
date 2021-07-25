@@ -10,13 +10,15 @@ namespace TemplateLib.Writer
     {
         private readonly string _regex;
         private readonly Regex _selectorsPattern;
+        private readonly Func<string, string> _selectorFactory;
         private Dictionary<string, string> _selectors = new Dictionary<string, string>();
 
         private string _template = "";
 
-        public RegexTextWriter(string template, string regex)
+        public RegexTextWriter(string template, string regex, Func<string, string> selectorFactory)
         {
             _regex = regex ?? throw new RegexNullException(this);
+            _selectorFactory = selectorFactory ?? throw new ArgumentNullException(nameof(selectorFactory));
             _selectorsPattern = new Regex(_regex);
             Template = template ?? throw new TemplateNullException(this);
         }
@@ -26,6 +28,7 @@ namespace TemplateLib.Writer
             if (writer == null) throw new ArgumentNullException(nameof(writer));
 
             _regex = writer._regex;
+            _selectorFactory = writer._selectorFactory;
             _selectorsPattern = new Regex(_regex);
             Template = writer._template;
         }
@@ -53,6 +56,11 @@ namespace TemplateLib.Writer
 
                 _template = value;
             }
+        }
+
+        public string CreateSelector(string name)
+        {
+            return _selectorFactory.Invoke(name);
         }
 
         public ITextWriter Copy()
