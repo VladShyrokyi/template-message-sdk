@@ -47,6 +47,7 @@
         <Compile Include="Builder\CompositeBlockBuilder.cs" />
         <Compile Include="Builder\DynamicCompositeBlockBuilder.cs" />
         <Compile Include="Builder\SimpleDynamicCompositeBlockBuilder.cs" />
+        <Compile Include="Builder\TemplateBlockBuilder.cs" />
         <Compile Include="Checker\CharCountChecker.cs" />
         <Compile Include="Checker\IConditionChecker.cs" />
         <Compile Include="DefaultRegex.cs" />
