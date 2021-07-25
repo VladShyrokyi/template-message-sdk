@@ -13,11 +13,11 @@ namespace TemplateLib.Builder
         protected readonly Dictionary<string, ITextBlock> Variables = new Dictionary<string, ITextBlock>();
 
         protected readonly ITextWriter Writer;
-        protected readonly ITextEditor Editor;
+        protected readonly ITextEditor? Editor;
 
         protected string Template => string.Join("", TemplateParts);
 
-        public TemplateBlockBuilder(ITextWriter writer, ITextEditor editor)
+        public TemplateBlockBuilder(ITextWriter writer, ITextEditor? editor)
         {
             Writer = writer;
             Editor = editor;

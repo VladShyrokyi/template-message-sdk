@@ -1,66 +1,55 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-using TemplateLib.Block;
+﻿using TemplateLib.Block;
 using TemplateLib.Checker;
+using TemplateLib.Editor;
 using TemplateLib.Exception;
 using TemplateLib.Factory;
+using TemplateLib.Writer;
 
 namespace TemplateLib.Builder
 {
-    public class TemplateBlockConditionBuilder
+    public class TemplateBlockConditionBuilder : TemplateBlockBuilder
     {
         private readonly IConditionChecker? _conditionChecker;
-        private readonly Dictionary<string, string> _templateParts = new Dictionary<string, string>();
 
-        protected readonly Dictionary<string, ITextBlock> Variables = new Dictionary<string, ITextBlock>();
-
-        public TemplateBlockConditionBuilder(IConditionChecker? conditionChecker = null)
+        public TemplateBlockConditionBuilder(ITextWriter writer, ITextEditor? editor,
+                                             IConditionChecker? conditionChecker = null) : base(writer, editor)
         {
             _conditionChecker = conditionChecker;
         }
 
-        protected string Template => Variables.Keys.Aggregate(
-            "",
-            (template, variableName) => _templateParts.TryGetValue(variableName, out string templatePart)
-                ? template + templatePart
-                : template
-        );
-
-        public TemplateBlockConditionBuilder Add(string name, string templatePart)
+        public new void Append(string templatePart)
         {
-            if (name == null) throw new VariableNameNullException(this);
-            if (templatePart == null) throw new TemplateNullException(this);
-
-            var checkedBlock = TextBlockFactory.CreateSimpleEmptyWith(templatePart);
-            if (IsNotContinueAdd(checkedBlock))
-                return this;
-
-            _templateParts.Add(name, templatePart);
-            UpdateIfCan(checkedBlock);
-
-            return this;
+            TryAppend(templatePart);
         }
 
-        public TemplateBlockConditionBuilder Put(string name, ITextBlock variable)
+        public bool TryAppend(string templatePart)
+        {
+            if (templatePart == null) throw new TemplateNullException(this);
+            var template = TextBlockFactory.CreateOnlyTemplate(templatePart);
+            if (IsNotContinueBuild(template)) return false;
+
+            base.Append(templatePart);
+            UpdateIfCan(template);
+            return true;
+        }
+
+        public new void PutVariable(string name, ITextBlock variable)
+        {
+            TryPutVariable(name, variable);
+        }
+
+        public bool TryPutVariable(string name, ITextBlock variable)
         {
             if (name == null) throw new VariableNameNullException(this);
             if (variable == null) throw new VariableNullException(this);
+            if (IsNotContinueBuild(variable)) return false;
 
-            if (IsNotContinueAdd(variable))
-                return this;
-
-            Variables.Add(name, variable);
+            base.PutVariable(name, variable);
             UpdateIfCan(variable);
-            return this;
+            return true;
         }
 
-        public TemplateTextBlock Build()
-        {
-            return TextBlockFactory.CreateTemplateWith(Template, Variables);
-        }
-
-        protected bool IsNotContinueAdd(ITextBlock checkedBlock)
+        protected bool IsNotContinueBuild(ITextBlock checkedBlock)
         {
             return _conditionChecker != null && !_conditionChecker.Check(checkedBlock);
         }

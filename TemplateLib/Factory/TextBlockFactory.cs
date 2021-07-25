@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using TemplateLib.Block;
 using TemplateLib.Builder;
+using TemplateLib.Checker;
 using TemplateLib.Exception;
 using TemplateLib.Writer;
 
@@ -10,66 +10,58 @@ namespace TemplateLib.Factory
 {
     public static class TextBlockFactory
     {
-        public static SimpleTextBlock CreateSimpleEmptyWith(string template)
+        public static ITextBlock CreateOnlyTemplate(string template)
         {
             if (template == null) throw new TemplateNullException(typeof(TextBlockFactory));
 
-            return new SimpleTextBlock(new RegexTextWriter(template, DefaultRegex.Regex), null);
+            return new InvariantTextBlock(
+                new RegexTextWriter(template, DefaultRegex.Regex, DefaultRegex.SelectorFactory), null);
         }
 
-        public static TemplateTextBlock CreateTemplateEmptyWith(string template)
-        {
-            if (template == null) throw new TemplateNullException(typeof(TextBlockFactory));
-
-            return new TemplateTextBlock(new RegexTextWriter(template, DefaultRegex.Regex), null);
-        }
-
-        public static SimpleTextBlock CreateSimpleWith(string template, Dictionary<string, string> variables)
-        {
-            if (template == null) throw new TemplateNullException(typeof(TextBlockFactory));
-            if (variables == null) throw new VariableNullException(typeof(TextBlockFactory));
-
-            var block = new SimpleTextBlock(new RegexTextWriter(template, DefaultRegex.Regex), null);
-            foreach (var pair in variables)
-                block.PutVariable(pair.Key, pair.Value);
-
-            return block;
-        }
-
-        public static SimpleTextBlock CreateSimpleWith(string variable)
+        public static ITextBlock CreateText(string variable)
         {
             if (variable == null) throw new VariableNullException(typeof(TextBlockFactory));
 
-            var block = new SimpleTextBlock(new RegexTextWriter(
-                                                DefaultRegex.SelectorFrom(DefaultRegex.DynamicVariableName),
-                                                DefaultRegex.Regex
-                                            ), null);
-            block.PutVariable(DefaultRegex.DynamicVariableName, variable);
-            return block;
+            return new TextBlock(new RegexTextWriter(
+                DefaultRegex.SelectorFactory.Invoke(DefaultRegex.DynamicVariableName),
+                DefaultRegex.Regex,
+                DefaultRegex.SelectorFactory
+            ), null, variable);
         }
 
-        public static TemplateTextBlock CreateTemplateWith(string template, Dictionary<string, ITextBlock> variables)
+        public static ITextBlock CreateTemplate(string template, Dictionary<string, ITextBlock> variables)
         {
             if (template == null) throw new TemplateNullException(typeof(TextBlockFactory));
             if (variables == null) throw new VariableNullException(typeof(TextBlockFactory));
 
-            var block = new TemplateTextBlock(new RegexTextWriter(template, DefaultRegex.Regex), null);
+            var block = new TemplateTextBlock(
+                new RegexTextWriter(template, DefaultRegex.Regex, DefaultRegex.SelectorFactory), null);
             foreach (var pair in variables)
                 block.PutVariable(pair.Key, pair.Value);
 
             return block;
         }
 
-        public static TemplateTextBlock CreateTemplateWith(string separator, params ITextBlock[] variables)
+        public static TemplateBlockDynamicBuilder DynamicBuilder(string separator = "", string template = "",
+                                                                 string dynamicVariableName =
+                                                                     DefaultRegex.DynamicVariableName)
         {
-            if (separator == null) throw new ArgumentNullException(nameof(separator));
-            if (variables == null) throw new TemplateNullException(typeof(TextBlockFactory));
+            return new TemplateBlockDynamicBuilder(new RegexTextWriter(
+                template,
+                DefaultRegex.Regex,
+                DefaultRegex.SelectorFactory
+            ), null, separator, dynamicVariableName);
+        }
 
-            var builder = new TemplateBlockConditionDynamicBuilder(separator);
-            foreach (var block in variables)
-                builder.DynamicPut(block);
-
-            return builder.Build();
+        public static TemplateBlockConditionDynamicBuilder ConditionDynamicBuilder(
+            IConditionChecker checker, string separator = "", string template = "",
+            string dynamicVariableName = DefaultRegex.DynamicVariableName)
+        {
+            return new TemplateBlockConditionDynamicBuilder(new RegexTextWriter(
+                template,
+                DefaultRegex.Regex,
+                DefaultRegex.SelectorFactory
+            ), null, checker, separator, dynamicVariableName);
         }
     }
 }

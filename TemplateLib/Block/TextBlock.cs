@@ -8,14 +8,15 @@ namespace TemplateLib.Block
 {
     public class TextBlock : ITextBlock
     {
-        public string Variable { get; set; } = "";
+        public string Variable { get; set; }
         public ITextWriter Writer { get; set; }
         public ITextEditor? Editor { get; set; }
 
-        public TextBlock(ITextWriter writer, ITextEditor? editor)
+        public TextBlock(ITextWriter writer, ITextEditor? editor, string variable = "")
         {
             Writer = writer ?? throw new ArgumentNullException(nameof(writer));
             Editor = editor;
+            Variable = variable;
         }
 
         public TextBlock(TextBlock block)
