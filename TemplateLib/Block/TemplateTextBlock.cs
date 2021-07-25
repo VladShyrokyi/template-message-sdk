@@ -8,7 +8,7 @@ using TemplateLib.Writer;
 
 namespace TemplateLib.Block
 {
-    public class TemplateTextBlock : ITextBlockWithVariables
+    public class TemplateTextBlock : ITextBlockWithVariables, ITextBlockExpendable
     {
         private readonly Dictionary<string, ITextBlock> _variables = new Dictionary<string, ITextBlock>();
 
@@ -60,6 +60,11 @@ namespace TemplateLib.Block
                 .ToDictionary(pair => pair.Key, pair => pair.Value.WriteWithoutEditor());
 
             return Writer.ToWriting(variables);
+        }
+
+        public void Append(string templatePart)
+        {
+            Writer.Template += templatePart;
         }
 
         public ITextBlock GetVariable(string name)
