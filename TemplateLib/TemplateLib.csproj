@@ -40,10 +40,10 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Block\Interfaces\ITextBlock.cs" />
+        <Compile Include="Block\Interfaces\ITextBlockExpendable.cs" />
+        <Compile Include="Block\Interfaces\ITextBlockWithVariables.cs" />
         <Compile Include="Block\InvariantTextBlock.cs" />
-        <Compile Include="Block\ITextBlock.cs" />
-        <Compile Include="Block\ITextBlockExpendable.cs" />
-        <Compile Include="Block\ITextBlockWithVariables.cs" />
         <Compile Include="Block\TemplateTextBlock.cs" />
         <Compile Include="Block\TextBlock.cs" />
         <Compile Include="Builder\TemplateBlockConditionBuilder.cs" />
