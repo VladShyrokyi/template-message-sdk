@@ -34,30 +34,28 @@ namespace TemplateConsoleApp.CommandSystem
             const string body = "BODY";
 
             var charCountChecker = new CharCountChecker(MaxCharCount);
-            var builder = new CompositeBlockBuilder(charCountChecker);
-
-            builder.Add(title, DefaultRegex.SelectorFrom(title));
-            builder.Add(body, "\n" + DefaultRegex.SelectorFrom(body));
+            var builder = TextBlockFactory.ConditionDynamicBuilder(charCountChecker);
 
             var titleBlock =
-                TextBlockFactory.CreateSimpleEmptyWith($"Response from " + DefaultRegex.SelectorFrom(title));
-            titleBlock.PutVariable(title, Url);
+                TextBlockFactory.CreateTemplate($"Response from {DefaultRegex.SelectorFactory.Invoke(title)}", new Dictionary<string, ITextBlock>
+                {
+                    {title, TextBlockFactory.CreateText(Url)}
+                });
             titleBlock.Editor = new BoldEditor();
-            builder.Put(title, titleBlock);
+            builder.Append(titleBlock);
 
             var data = GetData();
             if (data == null)
-            {
                 return BotClient.SendTextMessageAsync(
                     Update.Message.Chat,
                     builder.Build().Write(),
                     ParseMode.Html,
                     cancellationToken: Token
                 );
-            }
 
             var bodyTextBlock = CreateBody(data, charCountChecker.Limit);
-            builder.Put(body, bodyTextBlock);
+            builder.Append("\n");
+            builder.Append(bodyTextBlock);
 
             return BotClient.SendTextMessageAsync(
                 Update.Message.Chat,
@@ -84,11 +82,11 @@ namespace TemplateConsoleApp.CommandSystem
         {
             var charCountChecker = new CharCountChecker(limit);
             return result.Aggregate(
-                    new DynamicCompositeBlockBuilder("\n", "POST", charCountChecker),
+                    TextBlockFactory.ConditionDynamicBuilder(charCountChecker, "\n"),
                     (blockBuilder, response) =>
                     {
                         var postBlock = PostHandler(response);
-                        blockBuilder.DynamicPut(postBlock);
+                        blockBuilder.Append(postBlock);
                         return blockBuilder;
                     }
                 )
@@ -100,26 +98,28 @@ namespace TemplateConsoleApp.CommandSystem
             var title = CreateField("Title", post.title);
             title.Editor = new BoldEditor();
 
-            return new SimpleDynamicCompositeBlockBuilder("\n")
-                .DynamicPut(CreateField("User", post.userId.ToString()))
-                .DynamicPut(CreateField("Post", post.id.ToString()))
-                .DynamicPut(title)
-                .DynamicPut(CreateField("Body", post.body))
-                .DynamicPut("")
-                .Build();
+            var builder = TextBlockFactory.DynamicBuilder("\n");
+            builder.Append(CreateField("User", post.userId.ToString()));
+            builder.Append(CreateField("Post", post.id.ToString()));
+            builder.Append(title);
+            builder.Append(CreateField("Body", post.body));
+            builder.Append("");
+            return builder.Build();
         }
 
-        private static SimpleTextBlock CreateField(string labelName, string text)
+        private static ITextBlock CreateField(string labelName, string text)
         {
             const string labelVariableName = "NAME";
             const string textVariableName = "TEXT";
 
-            var textBlock = TextBlockFactory.CreateSimpleEmptyWith(
-                $"{DefaultRegex.SelectorFrom(labelVariableName)}: {DefaultRegex.SelectorFrom(textVariableName)}"
+            return TextBlockFactory.CreateTemplate(
+                $"{DefaultRegex.SelectorFactory.Invoke(labelVariableName)}: {DefaultRegex.SelectorFactory.Invoke(textVariableName)}",
+                new Dictionary<string, ITextBlock>
+                {
+                    {labelName, TextBlockFactory.CreateText(labelName)},
+                    {textVariableName, TextBlockFactory.CreateText(text)}
+                }
             );
-            textBlock.PutVariable(labelVariableName, labelName);
-            textBlock.PutVariable(textVariableName, text);
-            return textBlock;
         }
 
         private async Task<IEnumerable<JsonPostResponse>> FetchAndDeserialize()
