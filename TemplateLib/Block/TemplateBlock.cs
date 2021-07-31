@@ -8,17 +8,17 @@ using TemplateLib.Writer;
 
 namespace TemplateLib.Block
 {
-    public class TemplateTextBlock : ITextBlockWithVariables, ITextBlockExpendable
+    public class TemplateBlock : ITextBlockWithVariables, ITextBlockExpendable
     {
         private readonly Dictionary<string, ITextBlock> _variables = new Dictionary<string, ITextBlock>();
 
-        public TemplateTextBlock(ITextWriter writer, ITextEditor? editor)
+        public TemplateBlock(ITextWriter writer, ITextEditor? editor)
         {
             Writer = writer ?? throw new ArgumentNullException(nameof(writer));
             Editor = editor;
         }
 
-        public TemplateTextBlock(TemplateTextBlock block)
+        public TemplateBlock(TemplateBlock block)
         {
             if (block == null) throw new ArgumentNullException(nameof(block));
 
@@ -38,7 +38,7 @@ namespace TemplateLib.Block
 
         public ITextBlock Copy()
         {
-            return new TemplateTextBlock(this);
+            return new TemplateBlock(this);
         }
 
         public string Write()

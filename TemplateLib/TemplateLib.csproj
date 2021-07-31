@@ -40,20 +40,20 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Block\Interfaces\ITextBlock.cs" />
-        <Compile Include="Block\Interfaces\ITextBlockExpendable.cs" />
-        <Compile Include="Block\Interfaces\ITextBlockWithVariables.cs" />
-        <Compile Include="Block\InvariantTextBlock.cs" />
-        <Compile Include="Block\TemplateTextBlock.cs" />
-        <Compile Include="Block\TextBlock.cs" />
-        <Compile Include="Builder\TemplateBlockConditionBuilder.cs" />
-        <Compile Include="Builder\TemplateBlockConditionDynamicBuilder.cs" />
-        <Compile Include="Builder\TemplateBlockBuilder.cs" />
-        <Compile Include="Builder\TemplateBlockDynamicBuilder.cs" />
-        <Compile Include="Checker\CharCountChecker.cs" />
-        <Compile Include="Checker\IConditionChecker.cs" />
-        <Compile Include="DefaultRegex.cs" />
-        <Compile Include="Editor\ITextEditor.cs" />
+        <Compile Include="Block\Interfaces\ITextBlock.cs"/>
+        <Compile Include="Block\Interfaces\ITextBlockExpendable.cs"/>
+        <Compile Include="Block\Interfaces\ITextBlockWithVariables.cs"/>
+        <Compile Include="Block\InvariantBlock.cs"/>
+        <Compile Include="Block\TemplateBlock.cs"/>
+        <Compile Include="Block\TextBlock.cs"/>
+        <Compile Include="Builder\TemplateBlockConditionBuilder.cs"/>
+        <Compile Include="Builder\TemplateBlockConditionDynamicBuilder.cs"/>
+        <Compile Include="Builder\TemplateBlockBuilder.cs"/>
+        <Compile Include="Builder\TemplateBlockDynamicBuilder.cs"/>
+        <Compile Include="Checker\CharCountChecker.cs"/>
+        <Compile Include="Checker\IConditionChecker.cs"/>
+        <Compile Include="DefaultRegex.cs"/>
+        <Compile Include="Editor\ITextEditor.cs"/>
         <Compile Include="Editor\WrapperEditor.cs"/>
         <Compile Include="Exception\RegexNullException.cs" />
         <Compile Include="Exception\TemplateNullException.cs" />
