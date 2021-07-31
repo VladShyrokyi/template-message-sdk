@@ -54,6 +54,7 @@
         <Compile Include="Checker\IConditionChecker.cs" />
         <Compile Include="DefaultRegex.cs" />
         <Compile Include="Editor\ITextEditor.cs" />
+        <Compile Include="Editor\WrapperEditor.cs"/>
         <Compile Include="Exception\RegexNullException.cs" />
         <Compile Include="Exception\TemplateNullException.cs" />
         <Compile Include="Exception\VariableNameNullException.cs" />
