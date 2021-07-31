@@ -14,7 +14,7 @@ namespace TemplateLib.Factory
         {
             if (template == null) throw new TemplateNullException(typeof(TextBlockFactory));
 
-            return new InvariantTextBlock(
+            return new InvariantBlock(
                 new RegexTextWriter(template, DefaultRegex.Regex, DefaultRegex.SelectorFactory), null);
         }
 
@@ -34,7 +34,7 @@ namespace TemplateLib.Factory
             if (template == null) throw new TemplateNullException(typeof(TextBlockFactory));
             if (variables == null) throw new VariableNullException(typeof(TextBlockFactory));
 
-            var block = new TemplateTextBlock(
+            var block = new TemplateBlock(
                 new RegexTextWriter(template, DefaultRegex.Regex, DefaultRegex.SelectorFactory), null);
             foreach (var pair in variables)
                 block.PutVariable(pair.Key, pair.Value);

@@ -6,15 +6,15 @@ using TemplateLib.Writer;
 
 namespace TemplateLib.Block
 {
-    public class InvariantTextBlock : ITextBlock
+    public class InvariantBlock : ITextBlock
     {
-        public InvariantTextBlock(ITextWriter writer, ITextEditor? editor)
+        public InvariantBlock(ITextWriter writer, ITextEditor? editor)
         {
             Writer = writer ?? throw new ArgumentNullException(nameof(writer));
             Editor = editor;
         }
 
-        public InvariantTextBlock(InvariantTextBlock block)
+        public InvariantBlock(InvariantBlock block)
         {
             if (block == null) throw new ArgumentNullException(nameof(block));
 
@@ -28,7 +28,7 @@ namespace TemplateLib.Block
 
         public ITextBlock Copy()
         {
-            return new InvariantTextBlock(this);
+            return new InvariantBlock(this);
         }
 
         public string Write()

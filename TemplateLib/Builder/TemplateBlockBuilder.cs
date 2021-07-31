@@ -49,7 +49,7 @@ namespace TemplateLib.Builder
         public ITextBlock Build()
         {
             Writer.Template += Template;
-            var block = new TemplateTextBlock(Writer, Editor);
+            var block = new TemplateBlock(Writer.Copy(), Editor?.Copy());
             foreach (var pair in Variables)
                 block.PutVariable(pair.Key, pair.Value);
             return block;
