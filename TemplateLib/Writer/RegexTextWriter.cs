@@ -9,8 +9,8 @@ namespace TemplateLib.Writer
     public class RegexTextWriter : ITextWriter
     {
         private readonly string _regex;
-        private readonly Regex _selectorsPattern;
         private readonly Func<string, string> _selectorFactory;
+        private readonly Regex _selectorsPattern;
         private Dictionary<string, string> _selectors = new Dictionary<string, string>();
 
         private string _template = "";
@@ -58,11 +58,6 @@ namespace TemplateLib.Writer
             }
         }
 
-        public string CreateSelector(string name)
-        {
-            return _selectorFactory.Invoke(name);
-        }
-
         public ITextWriter Copy()
         {
             return new RegexTextWriter(this);
@@ -97,6 +92,16 @@ namespace TemplateLib.Writer
             }
 
             return result;
+        }
+
+        public string CreateSelector(string name)
+        {
+            return _selectorFactory.Invoke(name);
+        }
+
+        public override string ToString()
+        {
+            return ToWriting(new Dictionary<string, string>());
         }
     }
 }

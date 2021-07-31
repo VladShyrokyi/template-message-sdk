@@ -8,10 +8,6 @@ namespace TemplateLib.Block
 {
     public class TextBlock : ITextBlock
     {
-        public string Variable { get; set; }
-        public ITextWriter Writer { get; set; }
-        public ITextEditor? Editor { get; set; }
-
         public TextBlock(ITextWriter writer, ITextEditor? editor, string variable = "")
         {
             Writer = writer ?? throw new ArgumentNullException(nameof(writer));
@@ -27,6 +23,10 @@ namespace TemplateLib.Block
             Editor = block.Editor?.Copy();
             Variable = block.Variable;
         }
+
+        public string Variable { get; set; }
+        public ITextWriter Writer { get; set; }
+        public ITextEditor? Editor { get; set; }
 
         public ITextBlock Copy()
         {
@@ -48,6 +48,11 @@ namespace TemplateLib.Block
         public string WriteWithoutEditor()
         {
             return Writer.ToWriting(new Dictionary<string, string>(), Variable);
+        }
+
+        public override string ToString()
+        {
+            return Write();
         }
     }
 }

@@ -28,6 +28,11 @@ namespace TemplateLib.Block
                 PutVariable(pair.Key, pair.Value);
         }
 
+        public void Append(string templatePart)
+        {
+            Writer.Template += templatePart;
+        }
+
         public ITextWriter Writer { get; set; }
         public ITextEditor? Editor { get; set; }
 
@@ -62,11 +67,6 @@ namespace TemplateLib.Block
             return Writer.ToWriting(variables);
         }
 
-        public void Append(string templatePart)
-        {
-            Writer.Template += templatePart;
-        }
-
         public ITextBlock GetVariable(string name)
         {
             if (name == null) throw new VariableNameNullException(this);
@@ -80,6 +80,11 @@ namespace TemplateLib.Block
             if (variable == null) throw new VariableNullException(this);
 
             _variables.Add(name, variable);
+        }
+
+        public override string ToString()
+        {
+            return Write();
         }
     }
 }
