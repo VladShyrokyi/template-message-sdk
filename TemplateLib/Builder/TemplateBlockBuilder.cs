@@ -9,19 +9,19 @@ namespace TemplateLib.Builder
 {
     public class TemplateBlockBuilder
     {
+        protected readonly ITextEditor? Editor;
         protected readonly LinkedList<string> TemplateParts = new LinkedList<string>();
         protected readonly Dictionary<string, ITextBlock> Variables = new Dictionary<string, ITextBlock>();
 
         protected readonly ITextWriter Writer;
-        protected readonly ITextEditor? Editor;
-
-        protected string Template => string.Join("", TemplateParts);
 
         public TemplateBlockBuilder(ITextWriter writer, ITextEditor? editor)
         {
             Writer = writer;
             Editor = editor;
         }
+
+        protected string Template => string.Join("", TemplateParts);
 
         public void Append(string templatePart)
         {
@@ -53,6 +53,11 @@ namespace TemplateLib.Builder
             foreach (var pair in Variables)
                 block.PutVariable(pair.Key, pair.Value);
             return block;
+        }
+
+        public override string ToString()
+        {
+            return Build().Write();
         }
     }
 }

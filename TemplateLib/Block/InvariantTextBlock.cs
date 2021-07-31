@@ -8,10 +8,6 @@ namespace TemplateLib.Block
 {
     public class InvariantTextBlock : ITextBlock
     {
-        public ITextWriter Writer { get; set; }
-
-        public ITextEditor? Editor { get; set; }
-
         public InvariantTextBlock(ITextWriter writer, ITextEditor? editor)
         {
             Writer = writer ?? throw new ArgumentNullException(nameof(writer));
@@ -25,6 +21,10 @@ namespace TemplateLib.Block
             Writer = block.Writer.Copy();
             Editor = block.Editor?.Copy();
         }
+
+        public ITextWriter Writer { get; set; }
+
+        public ITextEditor? Editor { get; set; }
 
         public ITextBlock Copy()
         {
@@ -46,6 +46,11 @@ namespace TemplateLib.Block
         public string WriteWithoutEditor()
         {
             return Writer.ToWriting(new Dictionary<string, string>());
+        }
+
+        public override string ToString()
+        {
+            return Write();
         }
     }
 }

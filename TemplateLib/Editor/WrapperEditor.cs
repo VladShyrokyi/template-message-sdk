@@ -20,5 +20,10 @@
         {
             return $"{_prepend}{text}{_append}";
         }
+
+        public override string ToString()
+        {
+            return $"{_append}{_prepend}";
+        }
     }
 }
