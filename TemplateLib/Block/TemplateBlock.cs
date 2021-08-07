@@ -92,6 +92,7 @@ namespace TemplateLib.Block
             if (!(obj is TemplateBlock template)) return false;
             if (!Equals(template.Editor, Editor)) return false;
             if (!Equals(template.Writer, Writer)) return false;
+            if (!Equals(template._variables.Count, _variables.Count)) return false;
             foreach (var pair in _variables)
             {
                 if (!template._variables.TryGetValue(pair.Key, out ITextBlock value)) return false;
