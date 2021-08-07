@@ -18,7 +18,7 @@ namespace TemplateTest.Block
         public void Write_template_with_writer([Values("", "Template")] string template)
         {
             // Arrange
-            var block = CreateBlockWithoutVariables(template);
+            var block = CreateBlock(template);
 
             // Act
             var text = block.Write();
@@ -38,7 +38,7 @@ namespace TemplateTest.Block
             // Arrange
             var editor = new WrapperEditor(start, end);
             var inverseEditor = new WrapperEditor(end, start);
-            var block = CreateBlockWithoutVariables(template, editor);
+            var block = CreateBlock(template, null, editor);
 
             // Act
             var text = block.Write();
@@ -55,7 +55,7 @@ namespace TemplateTest.Block
         public void Throws_when_get_non_added_variable([Values(null, "", "0", "1", "VAR")] string variableName)
         {
             // Arrange
-            var block = CreateBlockWithoutVariables("");
+            var block = CreateBlock("");
 
             // Act
             var getVariable = new TestDelegate(() => block.GetVariable(variableName));
@@ -79,7 +79,7 @@ namespace TemplateTest.Block
             var inverseEditor = new WrapperEditor(append, prepend);
 
             // Act
-            var block = CreateBlockWithoutVariables(template, editor);
+            var block = CreateBlock(template, null, editor);
             var copy = block.Copy();
 
             // Assert
@@ -96,7 +96,7 @@ namespace TemplateTest.Block
             const string template = "Template";
 
             // Act
-            var block = CreateBlockWithoutVariables(template);
+            var block = CreateBlock(template);
             var copy = block.Copy();
             block = modification(block);
 
@@ -105,20 +105,18 @@ namespace TemplateTest.Block
             Assert.AreNotEqual(copy, block);
         }
 
-        protected static TemplateBlock CreateBlockWithoutVariables(string template, ITextEditor editor = null)
-        {
-            var writer = new RegexTextWriter(template, DefaultRegex.Regex, DefaultRegex.SelectorFactory);
-            return new TemplateBlock(writer, editor);
-        }
-
-        protected static TemplateBlock CreateBlockWithVariables(string template,
-                                                                Dictionary<string, ITextBlock> variables,
-                                                                ITextEditor editor = null)
+        protected static TemplateBlock CreateBlock(string template, Dictionary<string, ITextBlock> variables = null,
+                                                   ITextEditor editor = null)
         {
             var writer = new RegexTextWriter(template, DefaultRegex.Regex, DefaultRegex.SelectorFactory);
             var block = new TemplateBlock(writer, editor);
+
+            if (variables == null)
+                return block;
+
             foreach (var pair in variables)
                 block.PutVariable(pair.Key, pair.Value);
+
             return block;
         }
 
