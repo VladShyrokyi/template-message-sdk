@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 using TemplateLib.Exception;
@@ -102,6 +103,36 @@ namespace TemplateLib.Writer
         public override string ToString()
         {
             return ToWriting(new Dictionary<string, string>());
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is RegexTextWriter writer)) return false;
+            if (writer.Template != Template) return false;
+            if (writer.Selectors.Any(selector => !Selectors.Contains(selector))) return false;
+            if (writer._regex != _regex) return false;
+            if (!Equals(writer._selectorFactory, _selectorFactory)) return false;
+            return writer.ToString() == ToString();
+        }
+
+        protected bool Equals(RegexTextWriter other)
+        {
+            return _regex == other._regex && _selectorFactory.Equals(other._selectorFactory) &&
+                _selectorsPattern.Equals(other._selectorsPattern) && _selectors.Equals(other._selectors) &&
+                _template == other._template;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = _regex.GetHashCode();
+                hashCode = (hashCode * 397) ^ _selectorFactory.GetHashCode();
+                hashCode = (hashCode * 397) ^ _selectorsPattern.GetHashCode();
+                hashCode = (hashCode * 397) ^ _selectors.GetHashCode();
+                hashCode = (hashCode * 397) ^ _template.GetHashCode();
+                return hashCode;
+            }
         }
     }
 }

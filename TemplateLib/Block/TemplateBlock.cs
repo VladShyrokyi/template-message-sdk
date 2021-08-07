@@ -86,5 +86,35 @@ namespace TemplateLib.Block
         {
             return Write();
         }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is TemplateBlock template)) return false;
+            if (!Equals(template.Editor, Editor)) return false;
+            if (!Equals(template.Writer, Writer)) return false;
+            foreach (var pair in _variables)
+            {
+                if (!template._variables.TryGetValue(pair.Key, out ITextBlock value)) return false;
+                if (!Equals(value, pair.Value)) return false;
+            }
+
+            return true;
+        }
+
+        protected bool Equals(TemplateBlock other)
+        {
+            return _variables.Equals(other._variables) && Writer.Equals(other.Writer) && Equals(Editor, other.Editor);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = _variables.GetHashCode();
+                hashCode = (hashCode * 397) ^ Writer.GetHashCode();
+                hashCode = (hashCode * 397) ^ (Editor != null ? Editor.GetHashCode() : 0);
+                return hashCode;
+            }
+        }
     }
 }
