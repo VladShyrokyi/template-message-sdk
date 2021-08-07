@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using NUnit.Framework;
 
@@ -8,6 +9,8 @@ using TemplateLib.Block;
 using TemplateLib.Editor;
 using TemplateLib.Exception;
 using TemplateLib.Writer;
+
+using TemplateTest.Utils;
 
 namespace TemplateTest.Block
 {
@@ -18,7 +21,7 @@ namespace TemplateTest.Block
         public void Write_template([Values("", "Template")] string template)
         {
             // Arrange
-            var block = CreateBlock(template);
+            var block = BlockHelper.CreateTemplateBlock(template);
 
             // Act
             var text = block.Write();
@@ -38,7 +41,7 @@ namespace TemplateTest.Block
             // Arrange
             var editor = new WrapperEditor(start, end);
             var inverseEditor = new WrapperEditor(end, start);
-            var block = CreateBlock(template, null, editor);
+            var block = BlockHelper.CreateTemplateBlock(template, null, editor);
 
             // Act
             var text = block.Write();
@@ -55,7 +58,7 @@ namespace TemplateTest.Block
         public void Throws_when_get_non_added_variable([Values(null, "", "0", "1", "VAR")] string variableName)
         {
             // Arrange
-            var block = CreateBlock("");
+            var block = BlockHelper.CreateTemplateBlock("");
 
             // Act
             var getVariable = new TestDelegate(() => block.GetVariable(variableName));
@@ -79,7 +82,7 @@ namespace TemplateTest.Block
             var inverseEditor = new WrapperEditor(append, prepend);
 
             // Act
-            var block = CreateBlock(template, null, editor);
+            var block = BlockHelper.CreateTemplateBlock(template, null, editor);
             var copy = block.Copy();
 
             // Assert
@@ -96,28 +99,13 @@ namespace TemplateTest.Block
             const string template = "Template";
 
             // Act
-            var block = CreateBlock(template);
+            var block = BlockHelper.CreateTemplateBlock(template);
             var copy = block.Copy();
             block = modification(block);
 
             // Asset
             Assert.That(copy, Is.AssignableTo(block.GetType()));
             Assert.AreNotEqual(copy, block);
-        }
-
-        protected static TemplateBlock CreateBlock(string template, Dictionary<string, ITextBlock> variables = null,
-                                                   ITextEditor editor = null)
-        {
-            var writer = new RegexTextWriter(template, DefaultRegex.Regex, DefaultRegex.SelectorFactory);
-            var block = new TemplateBlock(writer, editor);
-
-            if (variables == null)
-                return block;
-
-            foreach (var pair in variables)
-                block.PutVariable(pair.Key, pair.Value);
-
-            return block;
         }
 
         private static Func<TemplateBlock, TemplateBlock>[] Modifications()
