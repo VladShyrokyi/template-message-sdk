@@ -17,6 +17,72 @@ namespace TemplateTest.Block
     [TestFixture(TestOf = typeof(TemplateBlock))]
     public class TemplateBlockTests
     {
+        private static Dictionary<string, ITextBlock>[] Variables => new[]
+        {
+            new Dictionary<string, ITextBlock>(),
+            new Dictionary<string, ITextBlock>
+            {
+                {"VAR", BlockHelper.CreateInvariantBlock("Variable")}
+            },
+            new Dictionary<string, ITextBlock>
+            {
+                {"VAR_1", BlockHelper.CreateInvariantBlock("")},
+                {"VAR_2", BlockHelper.CreateInvariantBlock("Variable 1")},
+                {"VAR_3", BlockHelper.CreateInvariantBlock("Variable 2", new WrapperEditor("[start]", "[end]"))},
+                {"VAR_4", BlockHelper.CreateInvariantBlock("Variable 3", new WrapperEditor("[end]", "[start]"))}
+            },
+            new Dictionary<string, ITextBlock>
+            {
+                {"VAR", BlockHelper.CreateTextBlock("value")}
+            },
+            new Dictionary<string, ITextBlock>
+            {
+                {"VAR_1", BlockHelper.CreateTextBlock("value 1")},
+                {"VAR_2", BlockHelper.CreateTextBlock("value 2")},
+                {"VAR_3", BlockHelper.CreateTextBlock("value 3", "Template with %[VAR]%")},
+                {
+                    "VAR_4",
+                    BlockHelper.CreateTextBlock("value 4", "Edited template with %[VAR]%",
+                        new WrapperEditor("[start]", "[end]"))
+                },
+                {
+                    "VAR_5",
+                    BlockHelper.CreateTextBlock("value 5", "Edited template with %[VAR]%",
+                        new WrapperEditor("[start]", "[end]"))
+                }
+            },
+            new Dictionary<string, ITextBlock>
+            {
+                {
+                    "VAR", BlockHelper.CreateTemplateBlock("Variable:\n%[VAR_1]% and %[VAR_2]%",
+                        new Dictionary<string, ITextBlock>
+                        {
+                            {"VAR_1", BlockHelper.CreateInvariantBlock("Template 1 in variable\n")},
+                            {"VAR_2", BlockHelper.CreateTextBlock("variable", "Template 2 in %[VAR]%\n")}
+                        })
+                }
+            },
+            new Dictionary<string, ITextBlock>
+            {
+                {
+                    "VAR_1", BlockHelper.CreateTemplateBlock("Variable 1:\n%[VAR_1]% and %[VAR_2]%",
+                        new Dictionary<string, ITextBlock>
+                        {
+                            {"VAR_1", BlockHelper.CreateInvariantBlock("Template 1 in variable 1")},
+                            {"VAR_2", BlockHelper.CreateInvariantBlock("Template 2 in variable 1")}
+                        })
+                },
+                {
+                    "VAR_2", BlockHelper.CreateTemplateBlock("Variable 2:\n %[VAR_1]% and %[VAR_2]%",
+                        new Dictionary<string, ITextBlock>
+                        {
+                            {"VAR_1", BlockHelper.CreateInvariantBlock("Template 1 in variable 2")},
+                            {"VAR_2", BlockHelper.CreateInvariantBlock("Template 2 in variable 2")}
+                        })
+                }
+            }
+        };
+
         [Test]
         public void Write_template([Values("", "Template")] string template)
         {
@@ -32,6 +98,29 @@ namespace TemplateTest.Block
             Assert.AreEqual(textWithoutEditor, template);
         }
 
+        [TestCaseSource(nameof(Variables))]
+        public void Write_template_with_variables(Dictionary<string, ITextBlock> variables)
+        {
+            // Arrange
+            var variableNameToSelector =
+                variables.ToDictionary(pair => pair.Key, pair => DefaultRegex.SelectorFactory(pair.Key));
+            var template = TextHelper.CreateTextWithVariables(variableNameToSelector);
+            var block = BlockHelper.CreateTemplateBlock(template, variables);
+
+            // Act
+            var text = block.Write();
+            var textWithoutEditor = block.WriteWithoutEditor();
+
+            // Assert
+            var variablesWrite = variables.ToDictionary(pair => pair.Key, pair => pair.Value.Write());
+            var result = TextHelper.CreateTextWithVariables(variablesWrite);
+            Assert.AreEqual(text, result);
+
+            var variablesWriteWithoutEditor =
+                variables.ToDictionary(pair => pair.Key, pair => pair.Value.WriteWithoutEditor());
+            var resultWithoutEditor = TextHelper.CreateTextWithVariables(variablesWriteWithoutEditor);
+            Assert.AreEqual(textWithoutEditor, resultWithoutEditor);
+        }
 
         [Test]
         public void Write_and_edit_template([Values("", "Template")] string template,

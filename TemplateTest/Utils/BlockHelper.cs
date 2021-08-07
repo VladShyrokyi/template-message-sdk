@@ -24,5 +24,17 @@ namespace TemplateTest.Utils
 
             return block;
         }
+
+        public static TextBlock CreateTextBlock(string value, string template = "%[VAR]%", ITextEditor editor = null)
+        {
+            var writer = new RegexTextWriter(template, DefaultRegex.Regex, DefaultRegex.SelectorFactory);
+            return new TextBlock(writer, editor, value);
+        }
+
+        public static InvariantBlock CreateInvariantBlock(string template, ITextEditor editor = null)
+        {
+            var writer = new RegexTextWriter(template, DefaultRegex.Regex, DefaultRegex.SelectorFactory);
+            return new InvariantBlock(writer, editor);
+        }
     }
 }
