@@ -7,6 +7,8 @@ using NUnit.Framework;
 using TemplateLib;
 using TemplateLib.Writer;
 
+using TemplateTest.Utils;
+
 namespace TemplateTest.Template
 {
     [TestFixture(TestOf = typeof(RegexTextWriter))]
@@ -76,7 +78,7 @@ namespace TemplateTest.Template
             const string variableValue = "Text";
             var variables = new Dictionary<string, string> {{variableName, variableValue}};
             var variableNameToSelector = variables.ToDictionary(pair => pair.Key, pair => selectorFactory(pair.Key));
-            var template = CreateTextWithVariables(variableNameToSelector);
+            var template = TextHelper.CreateTextWithVariables(variableNameToSelector);
 
             // Act
             var writer = new RegexTextWriter(template, regex, selectorFactory);
@@ -101,14 +103,14 @@ namespace TemplateTest.Template
             };
             var variableNameToSelector =
                 variables.ToDictionary(pair => pair.Key, pair => DefaultRegex.SelectorFactory(pair.Key));
-            var template = CreateTextWithVariables(variableNameToSelector);
+            var template = TextHelper.CreateTextWithVariables(variableNameToSelector);
 
             // Act
             var writer = new RegexTextWriter(template, DefaultRegex.Regex, DefaultRegex.SelectorFactory);
             var text = writer.ToWriting(new Dictionary<string, string>(), variableValue);
 
             // Assert
-            var result = CreateTextWithVariables(variables);
+            var result = TextHelper.CreateTextWithVariables(variables);
             Assert.AreEqual(text, result);
         }
 
@@ -118,7 +120,7 @@ namespace TemplateTest.Template
             // Arrange
             var variableNameToSelector = variables
                 .ToDictionary(pair => pair.Key, pair => DefaultRegex.SelectorFactory(pair.Key));
-            var template = CreateTextWithVariables(variableNameToSelector);
+            var template = TextHelper.CreateTextWithVariables(variableNameToSelector);
 
             // Act
             var writer = new RegexTextWriter(template, DefaultRegex.Regex, DefaultRegex.SelectorFactory);
@@ -129,7 +131,7 @@ namespace TemplateTest.Template
             Assert.IsNotEmpty(writer.Selectors);
             Assert.AreEqual(writer.Selectors.Count, variables.Count);
 
-            var result = CreateTextWithVariables(variables);
+            var result = TextHelper.CreateTextWithVariables(variables);
             Assert.AreEqual(text, result);
         }
 
@@ -141,7 +143,7 @@ namespace TemplateTest.Template
             const string defaultValue = "DEFAULT";
             var variableNameToSelector =
                 variables.ToDictionary(pair => pair.Key, pair => DefaultRegex.SelectorFactory(pair.Key));
-            var template = CreateTextWithVariables(variableNameToSelector);
+            var template = TextHelper.CreateTextWithVariables(variableNameToSelector);
 
             // Act
             var writer = new RegexTextWriter(template, DefaultRegex.Regex, DefaultRegex.SelectorFactory);
@@ -153,13 +155,6 @@ namespace TemplateTest.Template
             Assert.AreEqual(copy.ToWriting(variables, defaultValue), writer.ToWriting(variables, defaultValue));
             Assert.That(copy, Is.AssignableTo(writer.GetType()));
             Assert.AreEqual(copy, writer);
-        }
-
-        protected static string CreateTextWithVariables(Dictionary<string, string> variables)
-        {
-            return variables.Aggregate("Text:",
-                (container, pair) => container + $"\n - variable {pair.Key} = {pair.Value}"
-            );
         }
     }
 }
