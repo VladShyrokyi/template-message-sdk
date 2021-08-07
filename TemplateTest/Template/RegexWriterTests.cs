@@ -133,8 +133,9 @@ namespace TemplateTest.Template
             Assert.AreEqual(text, result);
         }
 
+        [Theory]
         [TestCaseSource(nameof(Variables))]
-        public void Copy_writer(Dictionary<string, string> variables)
+        public void Copy_equals_source(Dictionary<string, string> variables)
         {
             //Arrange
             const string defaultValue = "DEFAULT";
@@ -154,7 +155,7 @@ namespace TemplateTest.Template
             Assert.AreEqual(copy, writer);
         }
 
-        private static string CreateTextWithVariables(Dictionary<string, string> variables)
+        protected static string CreateTextWithVariables(Dictionary<string, string> variables)
         {
             return variables.Aggregate("Text:",
                 (container, pair) => container + $"\n - variable {pair.Key} = {pair.Value}"
