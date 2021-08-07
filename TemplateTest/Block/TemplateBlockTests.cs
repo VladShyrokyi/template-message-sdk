@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -57,7 +58,7 @@ namespace TemplateTest.Block
             var block = CreateBlockWithoutVariables("");
 
             // Act
-            TestDelegate getVariable = () => block.GetVariable(variableName);
+            var getVariable = new TestDelegate(() => block.GetVariable(variableName));
 
             // Assert
             Assert.That(getVariable,
@@ -69,32 +70,39 @@ namespace TemplateTest.Block
         }
 
         [Test]
-        public void Copy_template([Values("", "Template")] string template)
+        public void Copy_equals_source([Values("", "Template")] string template)
         {
             // Arrange
-            const string addedTemplate = "added";
             const string prepend = "[start]";
             const string append = "[end]";
+            var editor = new WrapperEditor(prepend, append);
+            var inverseEditor = new WrapperEditor(append, prepend);
 
             // Act
-            var editor = new WrapperEditor(prepend, append);
             var block = CreateBlockWithoutVariables(template, editor);
             var copy = block.Copy();
 
             // Assert
+            Assert.AreEqual(copy.Write(), block.Write());
+            Assert.AreEqual(copy.WriteWithEditor(inverseEditor), block.WriteWithEditor(inverseEditor));
+            Assert.AreEqual(copy.WriteWithoutEditor(), block.WriteWithoutEditor());
             Assert.AreEqual(copy, block);
-            Assert.AreEqual(copy.Write(), prepend + template + append);
-            Assert.AreEqual(copy.WriteWithEditor(editor), prepend + template + append);
-            Assert.AreEqual(copy.WriteWithoutEditor(), template);
+        }
 
-            // Act 2
-            block.Append(addedTemplate);
+        [TestCaseSource(nameof(Modifications))]
+        public void Copy_not_equals_modified_source(Func<TemplateBlock, TemplateBlock> modification)
+        {
+            // Arrange
+            const string template = "Template";
 
-            // Assert
-            Assert.IsFalse(Equals(copy, block));
-            Assert.IsFalse(Equals(copy.Write(), block.Write()));
-            Assert.IsFalse(Equals(copy.WriteWithEditor(editor), block.WriteWithEditor(editor)));
-            Assert.IsFalse(Equals(copy.WriteWithoutEditor(), block.WriteWithoutEditor()));
+            // Act
+            var block = CreateBlockWithoutVariables(template);
+            var copy = block.Copy();
+            block = modification(block);
+
+            // Asset
+            Assert.That(copy, Is.AssignableTo(block.GetType()));
+            Assert.AreNotEqual(copy, block);
         }
 
         protected static TemplateBlock CreateBlockWithoutVariables(string template, ITextEditor editor = null)
@@ -112,6 +120,33 @@ namespace TemplateTest.Block
             foreach (var pair in variables)
                 block.PutVariable(pair.Key, pair.Value);
             return block;
+        }
+
+        private static Func<TemplateBlock, TemplateBlock>[] Modifications()
+        {
+            const string modificationText = "\nBy modification";
+            return new Func<TemplateBlock, TemplateBlock>[]
+            {
+                block =>
+                {
+                    block.Editor = new WrapperEditor("", modificationText);
+                    return block;
+                },
+                block =>
+                {
+                    block.Append(modificationText);
+                    return block;
+                },
+                block =>
+                {
+                    const string variableName = "VAR";
+                    var writer = new RegexTextWriter(modificationText, DefaultRegex.Regex,
+                        DefaultRegex.SelectorFactory);
+                    var variableValue = new InvariantBlock(writer, null);
+                    block.PutVariable(variableName, variableValue);
+                    return block;
+                }
+            };
         }
     }
 }
