@@ -15,7 +15,7 @@ namespace TemplateTest.Block
     public class TemplateBlockTests
     {
         [Test]
-        public void Write_template_with_writer([Values("", "Template")] string template)
+        public void Write_template([Values("", "Template")] string template)
         {
             // Arrange
             var block = CreateBlock(template);
@@ -31,9 +31,9 @@ namespace TemplateTest.Block
 
 
         [Test]
-        public void Write_template_with_writer_and_editor([Values("", "Template")] string template,
-                                                          [Values(null, "", "[start]")] string start,
-                                                          [Values(null, "", "[end]")] string end)
+        public void Write_and_edit_template([Values("", "Template")] string template,
+                                            [Values(null, "", "[start]")] string start,
+                                            [Values(null, "", "[end]")] string end)
         {
             // Arrange
             var editor = new WrapperEditor(start, end);
