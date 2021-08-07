@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateLib", "TemplateLib\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateConsoleApp", "TemplateConsoleApp\TemplateConsoleApp.csproj", "{58062CBD-5C14-44D5-A8CE-0CEBC5B96587}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateTest", "TemplateTest\TemplateTest.csproj", "{FDE574E1-3DDE-46BC-9AA8-A4130100D0CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{58062CBD-5C14-44D5-A8CE-0CEBC5B96587}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58062CBD-5C14-44D5-A8CE-0CEBC5B96587}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58062CBD-5C14-44D5-A8CE-0CEBC5B96587}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDE574E1-3DDE-46BC-9AA8-A4130100D0CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDE574E1-3DDE-46BC-9AA8-A4130100D0CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDE574E1-3DDE-46BC-9AA8-A4130100D0CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDE574E1-3DDE-46BC-9AA8-A4130100D0CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
