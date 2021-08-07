@@ -22,6 +22,7 @@ namespace TemplateTest.Template
 
         private static Dictionary<string, string>[] Variables => new[]
         {
+            new Dictionary<string, string>(),
             new Dictionary<string, string>
             {
                 {"VAR", ""}
@@ -128,7 +129,6 @@ namespace TemplateTest.Template
 
             // Assert
             Assert.AreEqual(writer.Template, template);
-            Assert.IsNotEmpty(writer.Selectors);
             Assert.AreEqual(writer.Selectors.Count, variables.Count);
 
             var result = TextHelper.CreateTextWithVariables(variables);
