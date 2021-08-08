@@ -45,15 +45,11 @@ namespace TemplateLib.Builder
 
         public ITextBlock Build()
         {
-            var writer = Writer.Copy();
-            var editor = Editor?.Copy();
-            var block = new TemplateBlock(writer, editor);
-
+            var block = new TemplateBlock(Writer.Copy(), Editor?.Copy());
             foreach (var variableName in Variables)
             {
-                writer.Template += VariableTemplateParts[variableName];
-                var variableValue = VariableValues[variableName];
-                block.PutVariable(variableName, variableValue.Copy());
+                block.Append(VariableTemplateParts[variableName]);
+                block.PutVariable(variableName, VariableValues[variableName].Copy());
             }
 
             return block;
