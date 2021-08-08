@@ -2,10 +2,13 @@
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Telegram.Bot;
 using Telegram.Bot.Types;
+
 using TemplateLib;
 using TemplateLib.Block;
+using TemplateLib.Builder;
 using TemplateLib.Factory;
 
 namespace TemplateConsoleApp.MessageSystem
@@ -23,12 +26,13 @@ namespace TemplateConsoleApp.MessageSystem
             var bodyBlock = CreateField(text, update.Message.Text);
             var bottomBlock = CreateField(time, update.Message.Date.ToString(CultureInfo.CurrentCulture));
 
-            var builder = TextBlockFactory.DynamicBuilder("\n");
+            var builder = new BlockBuilder("\n", DefaultRegex.DynamicVariableName);
             builder.Append(headBlock);
             builder.Append(bodyBlock);
             builder.Append(bottomBlock);
 
-            return botClient.SendTextMessageAsync(update.Message.Chat, builder.Build().Write(), cancellationToken: token);
+            return botClient.SendTextMessageAsync(update.Message.Chat, builder.Build().Write(),
+                cancellationToken: token);
         }
 
         private static ITextBlock CreateField(string name, string text, string append = "")

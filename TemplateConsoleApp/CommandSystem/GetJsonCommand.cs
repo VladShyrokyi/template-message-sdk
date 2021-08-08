@@ -34,13 +34,16 @@ namespace TemplateConsoleApp.CommandSystem
             const string body = "BODY";
 
             var charCountChecker = new CharCountChecker(MaxCharCount);
-            var builder = TextBlockFactory.ConditionDynamicBuilder(charCountChecker);
+            var blockBuilder = new BlockBuilder("", DefaultRegex.DynamicVariableName);
+            var builder = new ConditionBlockBuilder(blockBuilder, charCountChecker);
+            // var builder = TextBlockFactory.ConditionDynamicBuilder(charCountChecker);
 
             var titleBlock =
-                TextBlockFactory.CreateTemplate($"Response from {DefaultRegex.SelectorFactory.Invoke(title)}", new Dictionary<string, ITextBlock>
-                {
-                    {title, TextBlockFactory.CreateText(Url)}
-                });
+                TextBlockFactory.CreateTemplate($"Response from {DefaultRegex.SelectorFactory.Invoke(title)}",
+                    new Dictionary<string, ITextBlock>
+                    {
+                        {title, TextBlockFactory.CreateText(Url)}
+                    });
             titleBlock.Editor = new BoldEditor();
             builder.Append(titleBlock);
 
@@ -53,9 +56,8 @@ namespace TemplateConsoleApp.CommandSystem
                     cancellationToken: Token
                 );
 
-            var bodyTextBlock = CreateBody(data, charCountChecker.Limit);
-            builder.Append("\n");
-            builder.Append(bodyTextBlock);
+            builder.Append(TextBlockFactory.CreateText("\n"));
+            builder.Append(CreateBody(data, charCountChecker.Limit));
 
             return BotClient.SendTextMessageAsync(
                 Update.Message.Chat,
@@ -82,7 +84,8 @@ namespace TemplateConsoleApp.CommandSystem
         {
             var charCountChecker = new CharCountChecker(limit);
             return result.Aggregate(
-                    TextBlockFactory.ConditionDynamicBuilder(charCountChecker, "\n"),
+                    new ConditionBlockBuilder(new BlockBuilder("\n", DefaultRegex.DynamicVariableName),
+                        charCountChecker),
                     (blockBuilder, response) =>
                     {
                         var postBlock = PostHandler(response);
@@ -98,12 +101,12 @@ namespace TemplateConsoleApp.CommandSystem
             var title = CreateField("Title", post.title);
             title.Editor = new BoldEditor();
 
-            var builder = TextBlockFactory.DynamicBuilder("\n");
+            var builder = new BlockBuilder("\n", DefaultRegex.DynamicVariableName);
             builder.Append(CreateField("User", post.userId.ToString()));
             builder.Append(CreateField("Post", post.id.ToString()));
             builder.Append(title);
             builder.Append(CreateField("Body", post.body));
-            builder.Append("");
+            builder.Append(TextBlockFactory.CreateText(""));
             return builder.Build();
         }
 
