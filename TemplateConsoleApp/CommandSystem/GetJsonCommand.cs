@@ -34,9 +34,7 @@ namespace TemplateConsoleApp.CommandSystem
             const string body = "BODY";
 
             var charCountChecker = new CharCountChecker(MaxCharCount);
-            var blockBuilder = new BlockBuilder("", DefaultRegex.DynamicVariableName);
-            var builder = new ConditionBlockBuilder(blockBuilder, charCountChecker);
-            // var builder = TextBlockFactory.ConditionDynamicBuilder(charCountChecker);
+            var builder = new ConditionBlockBuilder("", DefaultRegex.DynamicVariableName, charCountChecker);
 
             var titleBlock =
                 TextBlockFactory.CreateTemplate($"Response from {DefaultRegex.SelectorFactory.Invoke(title)}",
@@ -84,8 +82,7 @@ namespace TemplateConsoleApp.CommandSystem
         {
             var charCountChecker = new CharCountChecker(limit);
             return result.Aggregate(
-                    new ConditionBlockBuilder(new BlockBuilder("\n", DefaultRegex.DynamicVariableName),
-                        charCountChecker),
+                    new ConditionBlockBuilder("\n", DefaultRegex.DynamicVariableName, charCountChecker),
                     (blockBuilder, response) =>
                     {
                         var postBlock = PostHandler(response);

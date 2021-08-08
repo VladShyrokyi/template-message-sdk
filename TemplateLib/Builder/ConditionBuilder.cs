@@ -1,55 +1,41 @@
-﻿using System.Collections.Generic;
-
-using TemplateLib.Block;
+﻿using TemplateLib.Block;
 using TemplateLib.Checker;
+using TemplateLib.Editor;
 using TemplateLib.Factory;
+using TemplateLib.Writer;
 
 namespace TemplateLib.Builder
 {
-    public class ConditionBlockBuilder : IBlockBuilder
+    public class ConditionBlockBuilder : BlockBuilder
     {
-        protected readonly IBlockBuilder BlockBuilder;
         protected readonly IConditionChecker ConditionChecker;
 
-        public ConditionBlockBuilder(IBlockBuilder blockBuilder, IConditionChecker conditionChecker)
+        public ConditionBlockBuilder(string separator, string dynamicVariableName, IConditionChecker conditionChecker,
+                                     ITextEditor? editor = null,
+                                     RegexTextWriter? writer = null) : base(separator, dynamicVariableName, editor,
+            writer)
         {
-            BlockBuilder = blockBuilder;
             ConditionChecker = conditionChecker;
         }
 
-        public List<string> CopyVariables() => BlockBuilder.CopyVariables();
-        public Dictionary<string, string> CopyTemplateParts() => BlockBuilder.CopyTemplateParts();
-        public Dictionary<string, ITextBlock> CopyVariablesValue() => BlockBuilder.CopyVariablesValue();
-
-        public void Append(ITextBlock variable)
+        public new ITextBlock Build()
         {
-            BlockBuilder.Append(variable);
-        }
-
-        public ITextBlock Build()
-        {
-            var build = BlockBuilder.Build();
-            var writer = build.Writer.Copy();
-            writer.Template = "";
-            var editor = build.Editor?.Copy();
+            var writer = Writer.Copy();
+            var editor = Editor?.Copy();
             var block = new TemplateBlock(writer, editor);
 
-            var templateParts = CopyTemplateParts();
-            var variablesValue = CopyVariablesValue();
-
-            foreach (var variableName in CopyVariables())
+            foreach (var variableName in Variables)
             {
-                var templatePart = templateParts[variableName];
-                var onlyTemplate = TextBlockFactory.CreateOnlyTemplate(templatePart);
-                var variableValue = variablesValue[variableName];
+                var templatePart = VariableTemplateParts[variableName];
+                var variableValue = VariableValues[variableName];
 
+                var onlyTemplate = TextBlockFactory.CreateText(templatePart);
                 if (!ConditionChecker.Check(onlyTemplate)) continue;
                 if (!ConditionChecker.Check(variableValue)) continue;
 
                 writer.Template += templatePart;
                 ConditionChecker.Update(onlyTemplate);
-
-                block.PutVariable(variableName, variableValue);
+                block.PutVariable(variableName, variableValue.Copy());
                 ConditionChecker.Update(variableValue);
             }
 
