@@ -143,6 +143,16 @@ namespace TemplateTest.Block
             Assert.AreEqual(text, start + template + end);
         }
 
+        [Test]
+        public void Append_template([Values("", "Template")] string template,
+                                    [Values("", " append")] string templateAppend)
+        {
+            var block = BlockHelper.CreateTemplateBlock(template);
+            block.Append(templateAppend);
+
+            Assert.AreEqual(block.Writer.Template, template + templateAppend);
+        }
+
         [Theory]
         public void Throws_when_get_non_added_variable([Values(null, "", "0", "1", "VAR")] string variableName)
         {
