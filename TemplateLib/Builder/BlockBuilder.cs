@@ -12,7 +12,7 @@ namespace TemplateLib.Builder
         protected readonly RegexTextWriter Writer;
         protected readonly ITextEditor? Editor;
 
-        protected readonly List<string> Variables = new List<string>();
+        protected readonly LinkedList<string> Variables = new LinkedList<string>();
         protected readonly Dictionary<string, string> VariableTemplateParts = new Dictionary<string, string>();
         protected readonly Dictionary<string, ITextBlock> VariableValues = new Dictionary<string, ITextBlock>();
 
@@ -36,7 +36,7 @@ namespace TemplateLib.Builder
             var variableName = CreateVariableName();
             var templatePart = CreateTemplatePart(variableName);
 
-            Variables.Add(variableName);
+            Variables.AddLast(variableName);
             VariableTemplateParts.Add(variableName, templatePart);
             VariableValues.Add(variableName, variable);
 
