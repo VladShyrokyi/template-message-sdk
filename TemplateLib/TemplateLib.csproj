@@ -47,7 +47,7 @@
         <Compile Include="Block\TemplateBlock.cs"/>
         <Compile Include="Block\TextBlock.cs"/>
         <Compile Include="Builder\BlockBuilder.cs"/>
-        <Compile Include="Builder\ConditionBuilder.cs"/>
+        <Compile Include="Builder\ConditionBlockBuilder.cs"/>
         <Compile Include="Builder\IBlockBuilder.cs"/>
         <Compile Include="Checker\CharCountChecker.cs"/>
         <Compile Include="Checker\IConditionChecker.cs"/>

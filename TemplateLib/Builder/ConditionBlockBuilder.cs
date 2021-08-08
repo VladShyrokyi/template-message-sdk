@@ -11,9 +11,8 @@ namespace TemplateLib.Builder
         protected readonly IConditionChecker ConditionChecker;
 
         public ConditionBlockBuilder(string separator, string dynamicVariableName, IConditionChecker conditionChecker,
-                                     ITextEditor? editor = null,
-                                     RegexTextWriter? writer = null) : base(separator, dynamicVariableName, editor,
-            writer)
+                                     ITextEditor? editor = null, RegexTextWriter? writer = null) : base(separator,
+            dynamicVariableName, editor, writer)
         {
             ConditionChecker = conditionChecker;
         }
@@ -35,7 +34,7 @@ namespace TemplateLib.Builder
             ConditionChecker.Update(onlyTemplate);
             ConditionChecker.Update(variable);
 
-            Variables.Add(variableName);
+            Variables.AddLast(variableName);
             VariableTemplateParts.Add(variableName, templatePart);
             VariableValues.Add(variableName, variable);
 
