@@ -119,7 +119,7 @@ namespace TemplateConsoleApp.CommandSystem
                 $"{DefaultRegex.SelectorFactory.Invoke(labelVariableName)}: {DefaultRegex.SelectorFactory.Invoke(textVariableName)}",
                 new Dictionary<string, ITextBlock>
                 {
-                    {labelName, TextBlockFactory.CreateText(labelName)},
+                    {labelVariableName, TextBlockFactory.CreateText(labelName)},
                     {textVariableName, TextBlockFactory.CreateText(text)}
                 }
             );
