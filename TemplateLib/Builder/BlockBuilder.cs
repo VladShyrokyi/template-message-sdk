@@ -9,15 +9,15 @@ namespace TemplateLib.Builder
 {
     public class BlockBuilder : IBlockBuilder
     {
-        private readonly string _dynamicVariableName;
-
-        private readonly string _separator;
+        protected readonly RegexTextWriter Writer;
         protected readonly ITextEditor? Editor;
 
         protected readonly List<string> Variables = new List<string>();
         protected readonly Dictionary<string, string> VariableTemplateParts = new Dictionary<string, string>();
         protected readonly Dictionary<string, ITextBlock> VariableValues = new Dictionary<string, ITextBlock>();
-        protected readonly RegexTextWriter Writer;
+
+        private readonly string _separator;
+        private readonly string _dynamicVariableName;
         private int _dynamicVariableCounter = 0;
 
         public BlockBuilder(string separator, string dynamicVariableName, ITextEditor? editor = null,
