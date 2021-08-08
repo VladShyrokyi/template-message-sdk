@@ -33,15 +33,14 @@ namespace TemplateLib.Builder
         {
             if (variable == null) throw new VariableNullException(this);
 
-            var variableName = _dynamicVariableName + "_" + _dynamicVariableCounter;
-            Variables.Add(variableName);
-            var templatePart = _dynamicVariableCounter == 0
-                ? Writer.CreateSelector(variableName)
-                : _separator + Writer.CreateSelector(variableName);
+            var variableName = CreateVariableName();
+            var templatePart = CreateTemplatePart(variableName);
 
+            Variables.Add(variableName);
             VariableTemplateParts.Add(variableName, templatePart);
             VariableValues.Add(variableName, variable);
-            _dynamicVariableCounter++;
+
+            UpdateVariableCounter();
         }
 
         public ITextBlock Build()
@@ -58,6 +57,23 @@ namespace TemplateLib.Builder
             }
 
             return block;
+        }
+
+        protected string CreateVariableName()
+        {
+            return _dynamicVariableName + "_" + _dynamicVariableCounter;
+        }
+
+        protected string CreateTemplatePart(string variableName)
+        {
+            return _dynamicVariableCounter == 0
+                ? Writer.CreateSelector(variableName)
+                : _separator + Writer.CreateSelector(variableName);
+        }
+
+        protected void UpdateVariableCounter()
+        {
+            _dynamicVariableCounter++;
         }
     }
 }

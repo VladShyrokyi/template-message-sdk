@@ -1,7 +1,7 @@
 ﻿using TemplateLib.Block;
 using TemplateLib.Checker;
 using TemplateLib.Editor;
-using TemplateLib.Factory;
+using TemplateLib.Exception;
 using TemplateLib.Writer;
 
 namespace TemplateLib.Builder
@@ -18,28 +18,28 @@ namespace TemplateLib.Builder
             ConditionChecker = conditionChecker;
         }
 
-        public new ITextBlock Build()
+        public new void Append(ITextBlock variable)
         {
+            if (variable == null) throw new VariableNullException(this);
+
+            var variableName = CreateVariableName();
+            var templatePart = CreateTemplatePart(variableName);
+
             var writer = Writer.Copy();
-            var editor = Editor?.Copy();
-            var block = new TemplateBlock(writer, editor);
+            writer.Template = templatePart;
+            var onlyTemplate = new InvariantBlock(writer, null);
 
-            foreach (var variableName in Variables)
-            {
-                var templatePart = VariableTemplateParts[variableName];
-                var variableValue = VariableValues[variableName];
+            if (!ConditionChecker.Check(onlyTemplate)) return;
+            if (!ConditionChecker.Check(variable)) return;
 
-                var onlyTemplate = TextBlockFactory.CreateText(templatePart);
-                if (!ConditionChecker.Check(onlyTemplate)) continue;
-                if (!ConditionChecker.Check(variableValue)) continue;
+            ConditionChecker.Update(onlyTemplate);
+            ConditionChecker.Update(variable);
 
-                writer.Template += templatePart;
-                ConditionChecker.Update(onlyTemplate);
-                block.PutVariable(variableName, variableValue.Copy());
-                ConditionChecker.Update(variableValue);
-            }
+            Variables.Add(variableName);
+            VariableTemplateParts.Add(variableName, templatePart);
+            VariableValues.Add(variableName, variable);
 
-            return block;
+            UpdateVariableCounter();
         }
     }
 }
