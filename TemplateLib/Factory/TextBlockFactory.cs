@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 
 using TemplateLib.Block;
-using TemplateLib.Builder;
-using TemplateLib.Checker;
 using TemplateLib.Exception;
 using TemplateLib.Writer;
 
@@ -40,28 +38,6 @@ namespace TemplateLib.Factory
                 block.PutVariable(pair.Key, pair.Value);
 
             return block;
-        }
-
-        public static TemplateBlockDynamicBuilder DynamicBuilder(string separator = "", string template = "",
-                                                                 string dynamicVariableName =
-                                                                     DefaultRegex.DynamicVariableName)
-        {
-            return new TemplateBlockDynamicBuilder(new RegexTextWriter(
-                template,
-                DefaultRegex.Regex,
-                DefaultRegex.SelectorFactory
-            ), null, separator, dynamicVariableName);
-        }
-
-        public static TemplateBlockConditionDynamicBuilder ConditionDynamicBuilder(
-            IConditionChecker checker, string separator = "", string template = "",
-            string dynamicVariableName = DefaultRegex.DynamicVariableName)
-        {
-            return new TemplateBlockConditionDynamicBuilder(new RegexTextWriter(
-                template,
-                DefaultRegex.Regex,
-                DefaultRegex.SelectorFactory
-            ), null, checker, separator, dynamicVariableName);
         }
     }
 }
