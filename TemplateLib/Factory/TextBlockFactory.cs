@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using TemplateLib.Block;
+using TemplateLib.Builder;
 using TemplateLib.Exception;
 using TemplateLib.Writer;
 
@@ -38,6 +39,14 @@ namespace TemplateLib.Factory
                 block.PutVariable(pair.Key, pair.Value);
 
             return block;
+        }
+
+        public static ITextBlock MergeTemplates(string separator, params ITextBlock[] blocks)
+        {
+            var builder = new BlockBuilder(separator, DefaultRegex.DynamicVariableName);
+            foreach (var block in blocks)
+                builder.Append(block);
+            return builder.Build();
         }
     }
 }

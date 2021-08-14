@@ -95,24 +95,21 @@ namespace TemplateConsoleApp.CommandSystem
 
         private static ITextBlock PostHandler(JsonPostResponse post)
         {
-            var title = CreateField("Title", post.title);
-            title.Editor = new BoldEditor();
-
-            var builder = new BlockBuilder("\n", DefaultRegex.DynamicVariableName);
-            builder.Append(CreateField("User", post.userId.ToString()));
-            builder.Append(CreateField("Post", post.id.ToString()));
-            builder.Append(title);
-            builder.Append(CreateField("Body", post.body));
-            builder.Append(TextBlockFactory.CreateText(""));
-            return builder.Build();
+            return TextBlockFactory.MergeTemplates("\n",
+                CreateField("User", post.userId.ToString()),
+                CreateField("Post", post.id.ToString()),
+                CreateField("Title", post.title, new BoldEditor()),
+                CreateField("Body", post.body),
+                TextBlockFactory.CreateText("")
+            );
         }
 
-        private static ITextBlock CreateField(string labelName, string text)
+        private static ITextBlock CreateField(string labelName, string text, ITextEditor? editor = null)
         {
             const string labelVariableName = "NAME";
             const string textVariableName = "TEXT";
 
-            return TextBlockFactory.CreateTemplate(
+            var block = TextBlockFactory.CreateTemplate(
                 $"{DefaultRegex.SelectorFactory.Invoke(labelVariableName)}: {DefaultRegex.SelectorFactory.Invoke(textVariableName)}",
                 new Dictionary<string, ITextBlock>
                 {
@@ -120,6 +117,8 @@ namespace TemplateConsoleApp.CommandSystem
                     {textVariableName, TextBlockFactory.CreateText(text)}
                 }
             );
+            block.Editor = editor;
+            return block;
         }
 
         private async Task<IEnumerable<JsonPostResponse>> FetchAndDeserialize()

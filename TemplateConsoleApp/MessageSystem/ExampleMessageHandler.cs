@@ -8,7 +8,6 @@ using Telegram.Bot.Types;
 
 using TemplateLib;
 using TemplateLib.Block;
-using TemplateLib.Builder;
 using TemplateLib.Factory;
 
 namespace TemplateConsoleApp.MessageSystem
@@ -21,17 +20,14 @@ namespace TemplateConsoleApp.MessageSystem
             const string text = "Text";
             const string time = "Time";
 
-            var headBlock = CreateField(user, update.Message.Chat.Username,
-                $" ({update.Message.Chat.LastName} {update.Message.Chat.FirstName})");
-            var bodyBlock = CreateField(text, update.Message.Text);
-            var bottomBlock = CreateField(time, update.Message.Date.ToString(CultureInfo.CurrentCulture));
-
-            var builder = new BlockBuilder("\n", DefaultRegex.DynamicVariableName);
-            builder.Append(headBlock);
-            builder.Append(bodyBlock);
-            builder.Append(bottomBlock);
-
-            return botClient.SendTextMessageAsync(update.Message.Chat, builder.Build().Write(),
+            var block = TextBlockFactory.MergeTemplates(
+                "\n",
+                CreateField(user, update.Message.Chat.Username,
+                    $" ({update.Message.Chat.LastName} {update.Message.Chat.FirstName})"),
+                CreateField(text, update.Message.Text),
+                CreateField(time, update.Message.Date.ToString(CultureInfo.CurrentCulture))
+            );
+            return botClient.SendTextMessageAsync(update.Message.Chat, block.Write(),
                 cancellationToken: token);
         }
 
