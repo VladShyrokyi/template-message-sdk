@@ -1,4 +1,4 @@
-﻿Message template sdk
+﻿Message template sdk [![Nuget](https://img.shields.io/nuget/v/TemplateLib?style=plastic)](https://www.nuget.org/packages/TemplateLib) [![GitHub release (latest by date)](https://img.shields.io/github/v/release/VladShyrokyi/template-message-sdk)](https://github.com/VladShyrokyi/template-message-sdk)
 ====
 
 # Overview
@@ -141,4 +141,11 @@ const string result = "Order №13\n" +
     "Shipping cost: 25 $\n" +
     "Total amount: 130 $";
 Assert.AreEqual(block.Write(), result);
+```
+
+# How add package to your project?
+
+## Add package Reference
+```xml
+<PackageReference Include="TemplateLib" Version="1.0.0" />
 ```
