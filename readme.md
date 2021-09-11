@@ -8,9 +8,9 @@ A small library for creating templates from blocks using code. The same blocks c
 The writer's regex is passed a `template` with selectors, a `regex` string to find these selectors, and a `lambda function` to create selectors.
 ```c#
 var writer = new RegexTextWriter(
-    "I hold %[ITEM]% in my %[HAND]%",
-    "%\\[([^%,\\s]+)\\]%",
-    s => $"%[{s}]%"
+    "I hold %[ITEM]% in my %[HAND]%",   // Template
+    "%\\[([^%,\\s]+)\\]%",              // Regex for search selectors
+    s => $"%[{s}]%"                     // Function for create selector
 );
 var text = writer.ToWriting(new Dictionary<string, string>
 {
@@ -24,8 +24,14 @@ If you do not pass a value to any variable, it is replaced with a `default value
 # Generating template from blocks
 Using `TemplateBlockFactory` for creating blocks with `default regex`.
 
+### Default regex
+Expression - `%\[([^%,\s]+)\]%`.\
+Example - `%[EXAMPLE]%`\
+Class - `DefaultRegex`
+
 ## Order example
 ```c#
+// Child block 1
 var deliveryConfiguration = TextBlockFactory.CreateTemplate(
     "Delivery method: %[METHOD]%\n" +
     "Delivery address: %[ADDRESS]%\n" +
@@ -37,6 +43,8 @@ var deliveryConfiguration = TextBlockFactory.CreateTemplate(
         {"DATE", TextBlockFactory.CreateText("08.04.2021")}
     }
 );
+
+// Child block 2
 var paymentConfiguration = TextBlockFactory.CreateTemplate(
     "Payment method: %[METHOD]%",
     new Dictionary<string, ITextBlock>
@@ -44,6 +52,8 @@ var paymentConfiguration = TextBlockFactory.CreateTemplate(
         {"METHOD", TextBlockFactory.CreateText("cash")}
     }
 );
+
+// Block 1
 var orderConfiguration = TextBlockFactory.CreateTemplate(
     "Customer name: %[CUSTOMER_NAME]%\n" +
     "Phone: %[PHONE]%\n" +
@@ -63,6 +73,8 @@ var orderConfiguration = TextBlockFactory.CreateTemplate(
         {"ORDER_DATE", TextBlockFactory.CreateText("04.08.2021")}
     }
 );
+
+// Dynamic block generation function
 var orderFactory = new Func<int, (string, int, int), ITextBlock>((number, tuple) =>
     TextBlockFactory.CreateTemplate("%[NUMBER]%. %[ITEM]% %[COUNT]%x%[PRICE]% $",
         new Dictionary<string, ITextBlock>
@@ -74,6 +86,8 @@ var orderFactory = new Func<int, (string, int, int), ITextBlock>((number, tuple)
         }
     )
 );
+
+// Data
 var orders = new List<(string, int, int)>
 {
     ("Chair", 1, 25),
@@ -82,6 +96,8 @@ var orders = new List<(string, int, int)>
 };
 const int discount = 15;
 const int shippingCost = 25;
+
+// Result
 var block = TextBlockFactory.CreateTemplate(
     "Order №%[ORDER_NUMBER]%\n" +
     "%[ORDER_CONFIGURATION]%\n" +
@@ -122,6 +138,8 @@ var block = TextBlockFactory.CreateTemplate(
         }
     }
 );
+
+// Test
 const string result = "Order №13\n" +
     "Customer name: Vladislav Shirokiy\n" +
     "Phone: +8888888888\n" +
